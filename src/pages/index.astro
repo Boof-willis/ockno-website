@@ -104,18 +104,35 @@ import GLWrapper from '../components/gl/GLWrapper';
             perspective: 1000px;
         }
 
-        /* GPU acceleration hints for animated elements - removed permanent will-change */
-        .animate-float,
-        .animate-pulse,
-        .animate-beam,
-        .animate-dash,
-        .animate-shine {
-            transform: translateZ(0);
+        /* Subtle entrance animation - clean fade-up */
+        .animate-fade-in-up {
+            animation: fade-in-up 400ms ease-out forwards;
+            opacity: 0;
         }
         
-        .animate-fade-in-up {
-            animation: fade-in-up 0.8s ease-out forwards;
-            transform: translateZ(0);
+        @keyframes fade-in-up {
+            from {
+                opacity: 0;
+                transform: translateY(15px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Marquee animation - slow continuous scroll */
+        .animate-marquee {
+            animation: marquee 60s linear infinite;
+        }
+        
+        @keyframes marquee {
+            from {
+                transform: translateX(0);
+            }
+            to {
+                transform: translateX(-50%);
+            }
         }
         
         @media (prefers-reduced-motion: reduce) {
@@ -152,6 +169,8 @@ import GLWrapper from '../components/gl/GLWrapper';
     <!-- Full-screen WebGL Particle Background -->
     <div id="webgl">
         <GLWrapper client:only="react" />
+        <!-- Subtle blur overlay on top of particles -->
+        <div style="position: absolute; inset: 0; backdrop-filter: blur(0.5px); -webkit-backdrop-filter: blur(0.5px); pointer-events: none; z-index: 2;"></div>
     </div>
 
     <!-- Navigation - iOS-optimized fixed positioning -->
@@ -199,7 +218,7 @@ import GLWrapper from '../components/gl/GLWrapper';
 
             <div class="relative z-10 max-w-5xl mx-auto px-6 text-center">
                 <!-- Eyebrow Badge - futuristic octagon with proper borders -->
-                <div style="--poly-roundness:6px; background-color: #262626;" class="transform-gpu font-medium text-white/50 font-mono text-sm inline-flex items-center justify-center px-3 h-8 border border-[#424242] [clip-path:polygon(var(--poly-roundness)_0,calc(100%_-_var(--poly-roundness))_0,100%_var(--poly-roundness),100%_calc(100%_-_var(--poly-roundness)),calc(100%_-_var(--poly-roundness))_100%,var(--poly-roundness)_100%,0_calc(100%_-_var(--poly-roundness)),0_var(--poly-roundness))] mb-6 uppercase relative animate-fade-in-up">
+                <div style="--poly-roundness:6px; background-color: #262626;" class="transform-gpu font-medium text-white/50 font-mono text-sm inline-flex items-center justify-center px-3 h-8 border border-[#424242] [clip-path:polygon(var(--poly-roundness)_0,calc(100%_-_var(--poly-roundness))_0,100%_var(--poly-roundness),100%_calc(100%_-_var(--poly-roundness)),calc(100%_-_var(--poly-roundness))_100%,var(--poly-roundness)_100%,0_calc(100%_-_var(--poly-roundness)),0_var(--poly-roundness))] mb-6 uppercase relative animate-fade-in-up" style="animation-delay: 0ms;">
                     <span style="--h:12px;--hh:1.5px" class="absolute inline-block w-[var(--h)] top-[var(--hh)] left-[var(--hh)] h-[2px] -rotate-45 origin-top -translate-x-1/2 bg-[#424242]"></span>
                     <span style="--h:12px;--hh:1.5px" class="absolute w-[var(--h)] top-[var(--hh)] right-[var(--hh)] h-[2px] bg-[#424242] rotate-45 translate-x-1/2"></span>
                     <span style="--h:12px;--hh:1.5px" class="absolute w-[var(--h)] bottom-[var(--hh)] left-[var(--hh)] h-[2px] bg-[#424242] rotate-45 -translate-x-1/2"></span>
@@ -208,17 +227,17 @@ import GLWrapper from '../components/gl/GLWrapper';
                     For Teams That Close Deals Offline
                 </div>
                 
-                <h1 class="text-5xl md:text-7xl lg:text-8xl font-light tracking-tighter text-white mb-8 leading-[1.05] md:leading-[1.1] animate-fade-in-up" style="animation-delay: 0ms; font-weight: 300; word-spacing: 0.1em;">
+                <h1 class="text-5xl md:text-7xl lg:text-8xl font-light tracking-tighter text-white mb-8 leading-[1.05] md:leading-[1.1] animate-fade-in-up" style="animation-delay: 200ms; font-weight: 300; word-spacing: 0.1em;">
                     <span class="text-white">Your ads are finding <br class="hidden md:block">you&nbsp;<i style="font-style: italic; font-weight: 200;">leads</i>.</span> <br>
                     <span class="text-transparent bg-clip-text bg-gradient-to-r from-primary-400 via-primary-500 to-primary-400 bg-[200%_auto] animate-shine" style="font-weight: 300;">Not&nbsp;customers.</span>
                 </h1>
                 
-                <p class="text-sm sm:text-base text-balance max-w-[680px] mx-auto mb-8 animate-fade-in-up" style="animation-delay: 200ms; color: color-mix(in oklab, var(--foreground) 60%, transparent);">
+                <p class="text-sm sm:text-base text-balance max-w-[680px] mx-auto mb-8 animate-fade-in-up" style="animation-delay: 400ms; color: color-mix(in oklab, var(--foreground) 60%, transparent);">
                     The algorithm only knows what you tell it. Feed it real sales data and it stops wasting your money on people who were never going to buy.
                 </p>
 
                 <!-- CTA Buttons -->
-                <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-6 animate-fade-in-up" style="animation-delay: 400ms;">
+                <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-6 animate-fade-in-up" style="animation-delay: 600ms;">
                     <button data-particle-hover class="inline-flex relative uppercase border border-primary-500 font-mono cursor-pointer items-center justify-center gap-2 whitespace-nowrap font-medium ease-out transition-all duration-300 disabled:pointer-events-none disabled:opacity-50 outline-none focus-visible:ring-2 focus-visible:ring-primary-500 bg-black/90 text-white [box-shadow:inset_0_0_54px_0px_var(--tw-shadow-color)] shadow-primary-500 hover:shadow-primary-500/80 h-16 px-6 text-base">
                         [Get Early Access]
                     </button>
@@ -228,20 +247,105 @@ import GLWrapper from '../components/gl/GLWrapper';
                 </div>
 
                 <!-- Microcopy -->
-                <div class="flex flex-col items-center gap-6 mb-12 animate-fade-in-up" style="animation-delay: 400ms;">
-                    <p class="text-xs text-slate-500 font-medium">Launching soon · Limited early access spots</p>
-                    <div class="flex flex-wrap justify-center gap-x-6 gap-y-2 max-w-2xl">
-                        <div class="flex items-center gap-1.5 text-xs text-slate-400">
-                            <iconify-icon icon="solar:check-circle-linear" class="text-primary-500"></iconify-icon>
-                            Optimize for revenue, not lead volume
-                        </div>
-                        <div class="flex items-center gap-1.5 text-xs text-slate-400">
-                            <iconify-icon icon="solar:check-circle-linear" class="text-primary-500"></iconify-icon>
-                            Set up in minutes, not weeks
-                        </div>
-                        <div class="flex items-center gap-1.5 text-xs text-slate-400">
-                            <iconify-icon icon="solar:check-circle-linear" class="text-primary-500"></iconify-icon>
-                            Works with your stack (CRM, calls, calendars)
+                <div class="flex flex-col items-center gap-4 mb-16 animate-fade-in-up" style="animation-delay: 600ms;">
+                    <p class="text-xs text-slate-400 font-medium">Launching soon · Limited early access spots</p>
+                    
+                    <!-- Platform Integrations Marquee -->
+                    <div class="flex flex-col items-center gap-4 mt-4 w-full">
+                        <p class="text-[11px] text-slate-400 font-medium tracking-wider">Integrates with</p>
+                        
+                        <!-- Marquee Container - constrained width -->
+                        <div class="relative w-full max-w-2xl overflow-hidden" style="mask-image: linear-gradient(to right, transparent, black 96px, black calc(100% - 96px), transparent); -webkit-mask-image: linear-gradient(to right, transparent, black 96px, black calc(100% - 96px), transparent);">
+                            <!-- Marquee content -->
+                            <div class="flex gap-12 animate-marquee">
+                                <!-- First set -->
+                                <div class="flex gap-12 shrink-0">
+                                    <div class="flex items-center gap-2 text-xs text-slate-400 whitespace-nowrap">
+                                        <iconify-icon icon="logos:google-ads" width="20"></iconify-icon>
+                                        Google Ads
+                                    </div>
+                                    <div class="flex items-center gap-2 text-xs text-slate-400 whitespace-nowrap">
+                                        <iconify-icon icon="logos:meta-icon" width="20"></iconify-icon>
+                                        Meta
+                                    </div>
+                                    <div class="flex items-center gap-2 text-xs text-slate-400 whitespace-nowrap">
+                                        <iconify-icon icon="simple-icons:gohighlevel" width="20" class="text-slate-400"></iconify-icon>
+                                        HighLevel
+                                    </div>
+                                    <div class="flex items-center gap-2 text-xs text-slate-400 whitespace-nowrap">
+                                        <iconify-icon icon="logos:hubspot" width="20"></iconify-icon>
+                                        HubSpot
+                                    </div>
+                                    <div class="flex items-center gap-2 text-xs text-slate-400 whitespace-nowrap">
+                                        <iconify-icon icon="logos:salesforce" width="20"></iconify-icon>
+                                        Salesforce
+                                    </div>
+                                    <div class="flex items-center gap-2 text-xs text-slate-400 whitespace-nowrap">
+                                        <iconify-icon icon="solar:phone-calling-linear" width="20" class="text-slate-400"></iconify-icon>
+                                        CallRail
+                                    </div>
+                                    <div class="flex items-center gap-2 text-xs text-slate-400 whitespace-nowrap">
+                                        <iconify-icon icon="logos:google-calendar" width="20"></iconify-icon>
+                                        Google Calendar
+                                    </div>
+                                    <div class="flex items-center gap-2 text-xs text-slate-400 whitespace-nowrap">
+                                        <iconify-icon icon="simple-icons:calendly" width="20" class="text-slate-400"></iconify-icon>
+                                        Calendly
+                                    </div>
+                                    <div class="flex items-center gap-2 text-xs text-slate-400 whitespace-nowrap">
+                                        <iconify-icon icon="logos:stripe" width="20"></iconify-icon>
+                                        Stripe
+                                    </div>
+                                    <div class="flex items-center gap-2 text-xs text-slate-400 whitespace-nowrap">
+                                        <iconify-icon icon="solar:link-circle-linear" width="20" class="text-slate-400"></iconify-icon>
+                                        Webhooks
+                                    </div>
+                                </div>
+                                
+                                <!-- Duplicate set for seamless loop -->
+                                <div class="flex gap-12 shrink-0">
+                                    <div class="flex items-center gap-2 text-xs text-slate-400 whitespace-nowrap">
+                                        <iconify-icon icon="logos:google-ads" width="20"></iconify-icon>
+                                        Google Ads
+                                    </div>
+                                    <div class="flex items-center gap-2 text-xs text-slate-400 whitespace-nowrap">
+                                        <iconify-icon icon="logos:meta-icon" width="20"></iconify-icon>
+                                        Meta
+                                    </div>
+                                    <div class="flex items-center gap-2 text-xs text-slate-400 whitespace-nowrap">
+                                        <iconify-icon icon="simple-icons:gohighlevel" width="20" class="text-slate-400"></iconify-icon>
+                                        HighLevel
+                                    </div>
+                                    <div class="flex items-center gap-2 text-xs text-slate-400 whitespace-nowrap">
+                                        <iconify-icon icon="logos:hubspot" width="20"></iconify-icon>
+                                        HubSpot
+                                    </div>
+                                    <div class="flex items-center gap-2 text-xs text-slate-400 whitespace-nowrap">
+                                        <iconify-icon icon="logos:salesforce" width="20"></iconify-icon>
+                                        Salesforce
+                                    </div>
+                                    <div class="flex items-center gap-2 text-xs text-slate-400 whitespace-nowrap">
+                                        <iconify-icon icon="solar:phone-calling-linear" width="20" class="text-slate-400"></iconify-icon>
+                                        CallRail
+                                    </div>
+                                    <div class="flex items-center gap-2 text-xs text-slate-400 whitespace-nowrap">
+                                        <iconify-icon icon="logos:google-calendar" width="20"></iconify-icon>
+                                        Google Calendar
+                                    </div>
+                                    <div class="flex items-center gap-2 text-xs text-slate-400 whitespace-nowrap">
+                                        <iconify-icon icon="simple-icons:calendly" width="20" class="text-slate-400"></iconify-icon>
+                                        Calendly
+                                    </div>
+                                    <div class="flex items-center gap-2 text-xs text-slate-400 whitespace-nowrap">
+                                        <iconify-icon icon="logos:stripe" width="20"></iconify-icon>
+                                        Stripe
+                                    </div>
+                                    <div class="flex items-center gap-2 text-xs text-slate-400 whitespace-nowrap">
+                                        <iconify-icon icon="solar:link-circle-linear" width="20" class="text-slate-400"></iconify-icon>
+                                        Webhooks
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

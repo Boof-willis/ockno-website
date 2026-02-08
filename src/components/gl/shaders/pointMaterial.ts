@@ -115,7 +115,14 @@ export class DofPointsMaterial extends THREE.ShaderMaterial {
         
         float alpha = (1.04 - clamp(vDistance, 0.0, 1.0)) * clamp(smoothstep(-0.5, 0.25, vPosY), 0.0, 1.0) * uOpacity * revealMask * uRevealProgress * sparkleBrightness;
 
-        gl_FragColor = vec4(vec3(1.0), mix(alpha, sparkleBrightness - 1.1, uTransition));
+        // Orange tint - brand color #F97316
+        vec3 orangeTint = vec3(0.976, 0.451, 0.086); // RGB(249, 115, 22) normalized
+        vec3 white = vec3(1.0);
+        
+        // Mix white with orange - subtle tint (30% orange, 70% white)
+        vec3 particleColor = mix(white, orangeTint, 0.3);
+
+        gl_FragColor = vec4(particleColor, mix(alpha, sparkleBrightness - 1.1, uTransition));
       }`,
       uniforms: {
         positions: { value: null },
