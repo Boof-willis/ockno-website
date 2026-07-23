@@ -7,6 +7,17 @@ import EarlyAccessModal from "@/components/EarlyAccessModal";
 export const metadata: Metadata = {
   metadataBase: new URL("https://www.ockno.com"),
   alternates: { canonical: "/" },
+  // app/favicon.ico is picked up by Next's file convention on its own; these
+  // cover the sharper variants (SVG scales, 96px PNG fallback), iOS home-screen
+  // icon, and the PWA manifest with the maskable 192/512 icons.
+  icons: {
+    icon: [
+      { url: "/favicon.svg", type: "image/svg+xml" },
+      { url: "/favicon-96x96.png", type: "image/png", sizes: "96x96" },
+    ],
+    apple: "/apple-touch-icon.png",
+  },
+  manifest: "/site.webmanifest",
   title: "Ockno | The AI marketing employee",
   description:
     "Ockno is an AI employee for your marketing. It learns your business and does the work — building funnels, running ads, and following up with every lead — then gets sharper every week. Service-as-a-Software: not a tool you operate, a hire that delivers.",
