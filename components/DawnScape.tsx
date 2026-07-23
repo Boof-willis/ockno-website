@@ -94,9 +94,7 @@ export default function DawnScape() {
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
-    let ticking = false;
     const update = () => {
-      ticking = false;
       const zone = zoneRef.current;
       if (!zone) return;
       const rect = zone.getBoundingClientRect();
@@ -118,17 +116,30 @@ export default function DawnScape() {
       }
     };
 
-    const onScroll = () => {
-      if (ticking) return;
-      ticking = true;
-      requestAnimationFrame(update);
+    // Continuous rAF loop rather than a scroll listener: iOS delivers scroll
+    // events a frame behind the rendered position during momentum scrolling,
+    // and this scene's large drifts make that lag visible. Reading scrollY
+    // every frame and bailing when unchanged keeps the idle cost to a single
+    // comparison. (Same contract as MotionInit's WebKit fallbacks.)
+    let last = -1;
+    let rafId = 0;
+    const loop = () => {
+      const s = window.scrollY;
+      if (s !== last) {
+        last = s;
+        update();
+      }
+      rafId = requestAnimationFrame(loop);
     };
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onScroll);
+    const onResize = () => {
+      last = -1; // viewport height feeds the progress math — recompute
+    };
+    window.addEventListener("resize", onResize);
     update();
+    rafId = requestAnimationFrame(loop);
     return () => {
-      window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", onScroll);
+      cancelAnimationFrame(rafId);
+      window.removeEventListener("resize", onResize);
     };
   }, []);
 
@@ -178,10 +189,13 @@ export default function DawnScape() {
 
       {/* The sun — a warm glow that climbs the sky as you scroll to the footer.
           JS owns its transform (centering + rise); the SSR/reduced-motion default
-          is simply centered at its resting height. */}
+          is simply centered at its resting height. No will-change — it forces a
+          compositing layer WebKit can leave unpainted until the first scroll
+          (same trap HeroScape documents), which is exactly the iOS "footer scape
+          doesn't show up" failure. */}
       <div
         ref={sunRef}
-        className="absolute left-1/2 top-[74%] rounded-full will-change-transform"
+        className="absolute left-1/2 top-[74%] rounded-full"
         style={{
           transform: "translate(-50%, -50%)",
           width: "min(128vw, 1040px)",
@@ -199,7 +213,8 @@ export default function DawnScape() {
           ref={(el) => {
             ridgeRefs.current[i] = el;
           }}
-          className="ridge-layer absolute left-0 w-full will-change-transform"
+          // No will-change here either — see the sun's comment above.
+          className="ridge-layer absolute left-0 w-full"
           style={{ "--raise": r.raise, zIndex: i + 1 } as CSSProperties}
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}

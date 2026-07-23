@@ -211,10 +211,10 @@ export default function Features() {
               key={t.key}
               type="button"
               onClick={() => setActive(i)}
-              className={`flex-1 whitespace-nowrap px-4 py-2.5 rounded-full text-sm font-medium transition-colors ${
+              className={`flex-1 whitespace-nowrap px-4 py-2.5 rounded-full text-sm font-medium transition-colors duration-200 ${
                 i === active
                   ? "bg-card border border-border text-foreground shadow-card"
-                  : "text-muted-foreground hover:text-foreground"
+                  : "text-muted-foreground hover:text-foreground hover:bg-white/5"
               }`}
             >
               {t.label}
@@ -233,9 +233,9 @@ export default function Features() {
             type="button"
             aria-label="Previous feature"
             onClick={() => move(-1)}
-            className="btn-lift w-11 h-11 shrink-0 rounded-full border border-border bg-nested flex items-center justify-center text-muted-foreground hover:text-foreground hover:border-primary/30 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            className="w-12 h-12 shrink-0 rounded-full border border-white/10 bg-white/10 hover:bg-white/25 flex items-center justify-center text-foreground/80 hover:text-foreground transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           >
-            <Icon icon="solar:arrow-left-linear" width={18} />
+            <Icon icon="solar:arrow-left-linear" width={20} />
           </button>
           <p className="flex-1 text-center text-sm text-muted-foreground text-balance">
             {TABS[active].caption}
@@ -244,9 +244,9 @@ export default function Features() {
             type="button"
             aria-label="Next feature"
             onClick={() => move(1)}
-            className="btn-lift w-11 h-11 shrink-0 rounded-full border border-border bg-nested flex items-center justify-center text-muted-foreground hover:text-foreground hover:border-primary/30 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            className="w-12 h-12 shrink-0 rounded-full border border-white/10 bg-white/10 hover:bg-white/25 flex items-center justify-center text-foreground/80 hover:text-foreground transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           >
-            <Icon icon="solar:arrow-right-linear" width={18} />
+            <Icon icon="solar:arrow-right-linear" width={20} />
           </button>
         </div>
       </div>

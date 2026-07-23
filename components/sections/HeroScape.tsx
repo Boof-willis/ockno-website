@@ -193,7 +193,7 @@ function Ridges({ layers }: { layers: Layer[] }) {
         <div
           key={key}
           data-parallax-scroll={factor}
-          className="ridge-layer absolute left-0 w-full"
+          className="ridge-layer ridge-drop absolute left-0 w-full"
           // Explicit z per layer (later in the array = nearer = higher) so the
           // stacking order can't be reordered by the compositor.
           //
@@ -279,6 +279,15 @@ export function HeroScapeFront() {
       className="absolute inset-0 overflow-hidden z-20 pointer-events-none"
     >
       <Ridges layers={FRONT} />
+      {/* Fade the near ridge to true black at the very bottom for a seamless
+          hand-off to the black section below. It lives INSIDE the front layer
+          (z-20, in front of the trees) but is kept short and anchored to the
+          bottom so it only blacks out the tree band — the product screenshot,
+          which sinks in above the tree line, stays clear of it. */}
+      <div
+        className="absolute inset-x-0 bottom-0 h-[34vh]"
+        style={{ background: "linear-gradient(to bottom, transparent, #000 88%)" }}
+      />
     </div>
   );
 }

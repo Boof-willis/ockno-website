@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { activeSans, bodySans, jetbrainsMono } from "./fonts";
 import "./globals.css";
 import SmoothScroll from "@/components/SmoothScroll";
+import EarlyAccessModal from "@/components/EarlyAccessModal";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://www.ockno.com"),
@@ -70,6 +71,7 @@ export default function RootLayout({
       <body className="bg-page text-foreground font-body selection:bg-primary/30 selection:text-primary-foreground relative antialiased">
         <SmoothScroll />
         {children}
+        <EarlyAccessModal />
       </body>
     </html>
   );

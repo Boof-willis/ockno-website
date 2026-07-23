@@ -1,6 +1,5 @@
 import Icon from "../ui/Icon";
-
-const APP_URL = "https://app.ockno.com";
+import EarlyAccessButton from "../EarlyAccessButton";
 
 const FAQS = [
   {
@@ -71,13 +70,10 @@ export default function Faq() {
             No sales-page spin — including the honest answer on how fast
             you&apos;ll see results.
           </p>
-          <a
-            href={APP_URL}
-            className="btn-lift btn-pill btn-pill-ghost focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-          >
+          <EarlyAccessButton className="btn-lift btn-pill btn-pill-ghost focus:outline-none focus-visible:ring-2 focus-visible:ring-ring">
             Get early access
             <Icon icon="solar:arrow-right-linear" width={16} />
-          </a>
+          </EarlyAccessButton>
         </div>
 
         <div className="divide-y divide-border border-t border-border">

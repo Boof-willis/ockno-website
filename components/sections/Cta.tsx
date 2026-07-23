@@ -1,4 +1,4 @@
-const APP_URL = "https://app.ockno.com";
+import EarlyAccessButton from "../EarlyAccessButton";
 
 /* Final CTA — bookends the hero: where the hero dissolves UP into night, the
    close rises out of the dark into a sunrise. The dusk/dawn scape lives in
@@ -40,12 +40,9 @@ export default function Cta() {
         </p>
 
         <div data-reveal={220} className="flex justify-center mb-6 mt-10">
-          <a
-            href={APP_URL}
-            className="btn-lift btn-pill btn-pill-primary w-full sm:w-auto focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-page"
-          >
+          <EarlyAccessButton className="btn-lift btn-pill btn-pill-primary w-full sm:w-auto focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-page">
             Get early access
-          </a>
+          </EarlyAccessButton>
         </div>
         <p data-reveal={320} className="text-xs text-muted-foreground">
           Now in early access · No retainers, ever

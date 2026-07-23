@@ -1,6 +1,5 @@
 import Icon from "../ui/Icon";
-
-const APP_URL = "https://app.ockno.com";
+import EarlyAccessButton from "../EarlyAccessButton";
 
 const ROWS = [
   {
@@ -47,7 +46,7 @@ export default function Compare() {
         {/* The receipt — agency vs Ockno, line by line. */}
         <div className="max-w-2xl mb-12" data-reveal>
           <div className="eyebrow mb-5">The honest comparison</div>
-          <h2 className="text-3xl md:text-5xl font-semibold tracking-tight text-balance text-foreground mb-5">
+          <h2 className="text-xl md:text-5xl font-semibold tracking-tight text-balance text-foreground mb-5">
             Your agency vs. Ockno.
           </h2>
           <p className="text-muted-foreground text-lg">
@@ -57,50 +56,67 @@ export default function Compare() {
           </p>
         </div>
 
+        {/* A real comparison table, built from flex rows (not a <table>) so the
+            pinned first column is a plain block element — position: sticky is
+            reliable there in every browser, whereas sticky <th>/<td> is buggy in
+            Safari. The two comparison columns scroll horizontally on screens too
+            narrow to fit all three; the row-label column stays pinned so labels
+            are always readable. */}
         <div
           data-reveal={120}
           data-reveal-from="scale"
-          className="grid grid-cols-1 md:grid-cols-[1fr_1.1fr_1.1fr] gap-px rounded-card overflow-hidden border border-border bg-border"
+          className="rounded-card border border-border overflow-hidden"
         >
-          <div className="hidden md:block bg-page" />
-          <div className="bg-nested px-6 py-4 text-center">
-            <span className="text-sm font-semibold text-muted-foreground">
-              Your agency
-            </span>
-          </div>
-          <div className="bg-primary/10 px-6 py-4 text-center border-b-2 border-primary md:border-b-0">
-            <span className="text-sm font-semibold text-primary inline-flex items-center gap-2">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/images/ockno-logo.svg" alt="" className="h-4 w-auto" />
-              Ockno
-            </span>
-          </div>
+          <div className="scroll-x-thin overflow-x-auto">
+            <div className="min-w-[500px] md:min-w-[600px]">
+              {/* Header row */}
+              <div className="flex border-b border-border">
+                <div className="sticky left-0 z-20 w-[28%] shrink-0 bg-page border-r border-border px-3.5 py-2.5 md:px-5 md:py-4" />
+                <div className="w-[36%] shrink-0 bg-nested border-r border-border px-3.5 py-2.5 md:px-5 md:py-4 text-center">
+                  <span className="text-xs md:text-sm font-semibold text-muted-foreground">
+                    Your agency
+                  </span>
+                </div>
+                <div className="w-[36%] shrink-0 bg-primary/10 px-3.5 py-2.5 md:px-5 md:py-4 text-center">
+                  <span className="text-xs md:text-sm font-semibold text-primary inline-flex items-center justify-center gap-2">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src="/images/ockno-logo.svg" alt="" className="h-4 w-auto" />
+                    Ockno
+                  </span>
+                </div>
+              </div>
 
-          {ROWS.map((row) => (
-            <div key={row.label} className="contents">
-              <div className="bg-page px-6 py-4 flex items-center">
-                <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                  {row.label}
-                </span>
-              </div>
-              <div className="bg-nested px-6 py-4 flex items-start gap-2.5">
-                <Icon
-                  icon="solar:close-circle-linear"
-                  width={18}
-                  className="text-muted-foreground/70 shrink-0 mt-0.5"
-                />
-                <span className="text-sm text-muted-foreground">{row.agency}</span>
-              </div>
-              <div className="bg-primary/[0.06] px-6 py-4 flex items-start gap-2.5">
-                <Icon
-                  icon="solar:check-circle-bold"
-                  width={18}
-                  className="text-primary shrink-0 mt-0.5"
-                />
-                <span className="text-sm text-foreground">{row.ockno}</span>
-              </div>
+              {/* Body rows */}
+              {ROWS.map((row, i) => {
+                const b = i < ROWS.length - 1 ? "border-b border-border" : "";
+                return (
+                  <div key={row.label} className={`flex ${b}`}>
+                    <div className="sticky left-0 z-20 w-[28%] shrink-0 bg-page border-r border-border px-3.5 py-2.5 md:px-5 md:py-4 flex items-center">
+                      <span className="text-[10px] md:text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                        {row.label}
+                      </span>
+                    </div>
+                    <div className="w-[36%] shrink-0 bg-nested border-r border-border px-3.5 py-2.5 md:px-5 md:py-4 flex items-start gap-2 md:gap-2.5">
+                      <Icon
+                        icon="solar:close-circle-linear"
+                        width={16}
+                        className="text-muted-foreground/70 shrink-0 mt-0.5"
+                      />
+                      <span className="text-xs md:text-sm text-muted-foreground">{row.agency}</span>
+                    </div>
+                    <div className="w-[36%] shrink-0 bg-primary/[0.06] px-3.5 py-2.5 md:px-5 md:py-4 flex items-start gap-2 md:gap-2.5">
+                      <Icon
+                        icon="solar:check-circle-bold"
+                        width={16}
+                        className="text-primary shrink-0 mt-0.5"
+                      />
+                      <span className="text-xs md:text-sm text-foreground">{row.ockno}</span>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
-          ))}
+          </div>
         </div>
 
         <p className="text-center text-xs text-muted-foreground mt-6">
@@ -109,12 +125,9 @@ export default function Compare() {
         </p>
 
         <div data-reveal className="text-center mt-10">
-          <a
-            href={APP_URL}
-            className="btn-lift btn-pill btn-pill-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-page"
-          >
+          <EarlyAccessButton className="btn-lift btn-pill btn-pill-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-page">
             Get early access
-          </a>
+          </EarlyAccessButton>
         </div>
       </div>
     </section>

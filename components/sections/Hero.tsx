@@ -2,16 +2,17 @@ import RotatingWord from "../RotatingWord";
 import { Reveal, RevealCard } from "../motion/Reveal";
 import { HeroScapeBack, HeroScapeFront } from "./HeroScape";
 import Eyebrow from "../Eyebrow";
-
-const APP_URL = "https://app.ockno.com";
+import EarlyAccessButton from "../EarlyAccessButton";
 
 const ROTATING = [
-  "runs your ads.",
+  "learns your business.",
   "builds your funnels.",
-  "knows your business.",
-  "never sleeps.",
-  "gets smarter every week.",
-  "never asks for a raise.",
+  "creates your ads.",
+  "launches your campaigns.",
+  "optimizes for revenue.",
+  "follows up with your leads.",
+  "manages your bookings.",
+  "handles your reporting.",
 ];
 
 /* Eyebrow marquee. Every line is a claim already made elsewhere on this site —
@@ -38,7 +39,7 @@ const T = {
 export default function Hero() {
   return (
     <section
-      className="relative pt-32 pb-24 md:pt-44 md:pb-32 overflow-hidden"
+      className="relative pt-[98px] pb-[198px] md:pt-[146px] md:pb-[230px] overflow-hidden"
       style={{ minHeight: "100dvh" }}
     >
       <HeroScapeBack />
@@ -53,8 +54,8 @@ export default function Hero() {
         </Reveal>
 
         <Reveal delay={T.headline}>
-          <h1 className="text-[clamp(1.4rem,7.2vw,5rem)] font-semibold tracking-[-0.03em] text-foreground mb-6 leading-[1.06]">
-            The AI employee that<br />
+          <h1 className="text-[clamp(21px,6.4vw,55px)] md:text-[55px] font-semibold tracking-[-0.03em] text-foreground mb-6 leading-[1.06]">
+            The marketing operator that<br />
             <RotatingWord
               words={ROTATING}
               className="bg-gradient-to-r from-primary-hover to-primary bg-clip-text text-transparent"
@@ -77,12 +78,9 @@ export default function Hero() {
 
         <Reveal delay={T.cta} className="flex flex-col items-center">
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
-            <a
-              href={APP_URL}
-              className="btn-lift btn-pill btn-pill-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-page"
-            >
+            <EarlyAccessButton className="btn-lift btn-pill btn-pill-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-page">
               Get early access
-            </a>
+            </EarlyAccessButton>
             <a
               href="#build"
               className="btn-lift btn-pill btn-pill-ghost focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
@@ -90,9 +88,6 @@ export default function Hero() {
               See how it works
             </a>
           </div>
-          <p className="text-xs text-muted-foreground mt-4">
-            No retainers · Cancel anytime
-          </p>
 
           {/* Proof strip — the one hard number, above the fold. The named
               vertical makes the single stat credible. Expanded on in #proof. */}
@@ -102,11 +97,17 @@ export default function Hero() {
           </div>
         </Reveal>
 
-        {/* Dashboard mock. Parallax lives on the wrapper and the entrance on the
-            card, so the two transforms never fight. */}
+        {/* Dashboard mock. As the page scrolls, the wrapper sinks: a POSITIVE
+            data-parallax-scroll factor translates it downward, so it rises slower
+            than the page. The near ridge (HeroScapeFront, z-20) is glued to the
+            page (factor 0) and paints in front, so its tree line climbs up over
+            the lagging mock — the image descends into the trees. Parallax lives
+            on the wrapper and the entrance on the card, so the two transforms
+            never fight. */}
         <div
-          className="relative max-w-5xl mx-auto group mt-20"
-          data-parallax="0.06"
+          className="relative max-w-5xl mx-auto group mt-10"
+          data-parallax-scroll="0.22"
+          style={{ ["--pfactor" as string]: 0.22 }}
         >
           <RevealCard delay={T.card}>
             {/* Real product — the Brain: Ockno learning a business from every
@@ -131,11 +132,15 @@ export default function Hero() {
           z-10 content to occlude the mock. */}
       <HeroScapeFront />
 
-      {/* Fade the whole scape to true black at the bottom so the hero dissolves
-          into the black section below with no seam. Above everything (z-30). */}
+      {/* Fade the scape to true black at the bottom so the hero dissolves into
+          the black section below with no seam. Sits at z-[5] — BEHIND the z-10
+          content — so it darkens the sky and the back ranges but never touches
+          the product screenshot or copy, which stay full-brightness as they
+          scroll. The near ridge (trees) carries its own bottom fade in
+          HeroScapeFront so it blacks out too without dimming the screenshot. */}
       <div
         aria-hidden
-        className="absolute inset-x-0 bottom-0 h-[52vh] z-30 pointer-events-none"
+        className="absolute inset-x-0 bottom-0 h-[52vh] z-[5] pointer-events-none"
         style={{ background: "linear-gradient(to bottom, transparent, #000 94%)" }}
       />
     </section>

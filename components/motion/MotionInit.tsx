@@ -13,15 +13,15 @@ import { useEffect } from "react";
  *  - [data-countup]      number counts from 0 to the given value when it enters
  *                        the viewport. Server-rendered text is the no-JS/reduced-
  *                        motion fallback. Optional [data-duration].
- *  - [data-parallax]     gentle scroll parallax (factor, e.g. "0.06"). Desktop
- *                        only. Uses the element's layout position (not its
- *                        transformed rect) so there's no feedback loop.
+ *  - [data-parallax]     gentle scroll parallax (factor, e.g. "0.06"). Uses the
+ *                        element's layout position (not its transformed rect)
+ *                        so there's no feedback loop.
  *  - [data-parallax-scroll]
  *                        absolute scroll parallax: translateY = scrollY * factor,
  *                        unclamped. For stacked depth layers that must hold an
  *                        exact ratio to each other — [data-parallax] is
  *                        element-relative and clamped, so layers drift out of
- *                        register. Desktop only.
+ *                        register.
  *  - [data-focus-group]  container whose [data-focus-item] children dim to 0.25,
  *                        except the one nearest the focus line, which lights to
  *                        1. Reads one idea at a time as you scroll.
@@ -34,7 +34,6 @@ export default function MotionInit() {
     const reduced = window.matchMedia(
       "(prefers-reduced-motion: reduce)",
     ).matches;
-    const isMobile = window.matchMedia("(max-width: 768px)").matches;
 
     const revealEls = Array.from(
       document.querySelectorAll<HTMLElement>("[data-reveal]"),
@@ -141,7 +140,7 @@ export default function MotionInit() {
       };
     }
 
-    // --- Absolute scroll parallax (desktop only) ------------------------------
+    // --- Absolute scroll parallax ---------------------------------------------
     // translateY = scrollY * factor. Layers hold an exact ratio to each other at
     // every scroll position, which is what reads as depth; a factor of 0 pins a
     // layer to the page and stands in for "infinitely far away".
@@ -166,74 +165,88 @@ export default function MotionInit() {
       /^((?!chrome|android|crios|fxios|edg).)*safari/i.test(
         navigator.userAgent,
       );
-    const useScrollAnim = supportsScrollTimeline && !isSafari;
+    // Every iOS browser is WebKit under its own branding (CriOS, FxiOS,
+    // EdgiOS…), so the Safari paint-deferral bug applies to all of them.
+    // iPadOS masquerades as macOS but reports multitouch.
+    const isIOS =
+      typeof navigator !== "undefined" &&
+      (/iPad|iPhone|iPod/.test(navigator.userAgent) ||
+        (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1));
+    const useScrollAnim = supportsScrollTimeline && !isSafari && !isIOS;
     if (useScrollAnim) document.documentElement.classList.add("st-anim");
     let removeScrollParallax: (() => void) | undefined;
-    if (!isMobile && !useScrollAnim && parallaxScrollEls.length) {
+    if (!useScrollAnim && parallaxScrollEls.length) {
       // 2D translateY on purpose, and factor-0 layers are never written at all.
       // translate3d force-promotes each layer to its own compositing layer, and
-      // Safari (the only engine on this path) can leave a freshly-promoted
+      // WebKit (the only engine on this path) can leave a freshly-promoted
       // layer unpainted until the first scroll recomposites — the scape "pops
       // in" — and can mis-sort promoted siblings so a nearer layer hides.
       // 2D transforms keep normal paint flow and stacking.
+      //
+      // Driven by a continuous rAF loop rather than a scroll listener: during
+      // iOS momentum scrolling, scroll events arrive a frame behind the
+      // rendered position, which reads as jitter on layers that must hold an
+      // exact ratio to the page. The loop reads scrollY every frame and only
+      // writes when it changed, so the idle cost is one comparison per frame.
       const layers = parallaxScrollEls
         .map((el) => ({
           el,
           factor: parseFloat(el.dataset.parallaxScroll || "0"),
         }))
         .filter((l) => l.factor !== 0);
-      let ticking = false;
-      const update = () => {
+      let last = -1;
+      let rafId = 0;
+      const loop = () => {
         const s = window.scrollY;
-        for (const l of layers) {
-          l.el.style.transform = `translateY(${(s * l.factor).toFixed(1)}px)`;
+        if (s !== last) {
+          last = s;
+          for (const l of layers) {
+            l.el.style.transform = `translateY(${(s * l.factor).toFixed(1)}px)`;
+          }
         }
-        ticking = false;
+        rafId = requestAnimationFrame(loop);
       };
-      const onScroll = () => {
-        if (ticking) return;
-        ticking = true;
-        requestAnimationFrame(update);
-      };
-      window.addEventListener("scroll", onScroll, { passive: true });
-      update();
-      removeScrollParallax = () =>
-        window.removeEventListener("scroll", onScroll);
+      loop();
+      removeScrollParallax = () => cancelAnimationFrame(rafId);
     }
 
-    // --- Ridge dim (Safari fallback) ------------------------------------------
+    // --- Ridge dim (WebKit fallback) ------------------------------------------
     // Chromium dims [data-dim] ridges via the scroll-timeline in globals.css.
-    // Safari falls through here: brightness ramps 1 → 0.62 over the first ~88vh
-    // of scroll, matching the CSS keyframe, so the nearer terrain darkens as the
-    // sky falls to night.
+    // Safari/iOS fall through here: brightness ramps 1 → 0.62 over the first
+    // ~88vh of scroll, matching the CSS keyframe, so the nearer terrain darkens
+    // as the sky falls to night. Same continuous-loop contract as the scroll
+    // parallax above.
     let removeDim: (() => void) | undefined;
     const dimEls = Array.from(
       document.querySelectorAll<HTMLElement>("[data-dim]"),
     );
-    if (!isMobile && !useScrollAnim && dimEls.length) {
-      let ticking = false;
-      const update = () => {
-        const p = Math.min(1, window.scrollY / (window.innerHeight * 0.88));
-        const b = (1 - p * 0.38).toFixed(3);
-        for (const el of dimEls) el.style.filter = `brightness(${b})`;
-        ticking = false;
+    if (!useScrollAnim && dimEls.length) {
+      let last = -1;
+      let rafId = 0;
+      const loop = () => {
+        const s = window.scrollY;
+        if (s !== last) {
+          last = s;
+          const p = Math.min(1, s / (window.innerHeight * 0.88));
+          const b = (1 - p * 0.38).toFixed(3);
+          for (const el of dimEls) el.style.filter = `brightness(${b})`;
+        }
+        rafId = requestAnimationFrame(loop);
       };
-      const onScroll = () => {
-        if (ticking) return;
-        ticking = true;
-        requestAnimationFrame(update);
+      // Viewport height feeds the ramp — force a recompute on resize.
+      const onResize = () => {
+        last = -1;
       };
-      window.addEventListener("scroll", onScroll, { passive: true });
-      window.addEventListener("resize", onScroll);
-      update();
+      window.addEventListener("resize", onResize);
+      loop();
       removeDim = () => {
-        window.removeEventListener("scroll", onScroll);
-        window.removeEventListener("resize", onScroll);
+        cancelAnimationFrame(rafId);
+        window.removeEventListener("resize", onResize);
         for (const el of dimEls) el.style.filter = "";
       };
     }
 
-    // --- Parallax (desktop only) ----------------------------------------------
+    // --- Parallax -------------------------------------------------------------
     // Gentle element-relative drift: translateY tracks how far the element's
     // centre sits from the viewport centre, scaled by factor and clamped to ±44.
     //
@@ -252,7 +265,7 @@ export default function MotionInit() {
     const supportsCompositorParallax =
       useScrollAnim && typeof ST === "function";
     let removeParallax: (() => void) | undefined;
-    if (!isMobile && parallaxEls.length && supportsCompositorParallax) {
+    if (parallaxEls.length && supportsCompositorParallax) {
       const de = document.documentElement;
       let anims: Animation[] = [];
       const build = () => {
@@ -296,9 +309,10 @@ export default function MotionInit() {
         for (const a of anims) a.cancel();
         parallaxEls.forEach((el) => (el.style.willChange = ""));
       };
-    } else if (!isMobile && parallaxEls.length) {
-      // Fallback: main-thread scroll listener. Cache each element's
-      // document-space midpoint from layout (untransformed).
+    } else if (parallaxEls.length) {
+      // Fallback: main-thread rAF loop (same contract as the scroll-parallax
+      // fallback above — scroll events lag iOS momentum scrolling). Cache each
+      // element's document-space midpoint from layout (untransformed).
       const bases = parallaxEls.map((el) => {
         const r = el.getBoundingClientRect();
         return {
@@ -307,28 +321,30 @@ export default function MotionInit() {
           docMid: r.top + window.scrollY + r.height / 2,
         };
       });
-      let ticking = false;
-      const update = () => {
-        const viewMid = window.scrollY + window.innerHeight / 2;
-        for (const b of bases) {
-          const y = Math.max(-44, Math.min(44, (viewMid - b.docMid) * b.factor));
-          // 2D on purpose — see the scroll-parallax fallback above: 3D would
-          // promote the card to a compositing layer Safari may not paint on load.
-          b.el.style.transform = `translateY(${y.toFixed(1)}px)`;
+      let last = -1;
+      let rafId = 0;
+      const loop = () => {
+        const s = window.scrollY;
+        if (s !== last) {
+          last = s;
+          const viewMid = s + window.innerHeight / 2;
+          for (const b of bases) {
+            const y = Math.max(-44, Math.min(44, (viewMid - b.docMid) * b.factor));
+            // 2D on purpose — see the scroll-parallax fallback above: 3D would
+            // promote the card to a compositing layer WebKit may not paint on load.
+            b.el.style.transform = `translateY(${y.toFixed(1)}px)`;
+          }
         }
-        ticking = false;
+        rafId = requestAnimationFrame(loop);
       };
-      const onScroll = () => {
-        if (ticking) return;
-        ticking = true;
-        requestAnimationFrame(update);
+      const onResize = () => {
+        last = -1;
       };
-      window.addEventListener("scroll", onScroll, { passive: true });
-      window.addEventListener("resize", onScroll);
-      update();
+      window.addEventListener("resize", onResize);
+      loop();
       removeParallax = () => {
-        window.removeEventListener("scroll", onScroll);
-        window.removeEventListener("resize", onScroll);
+        cancelAnimationFrame(rafId);
+        window.removeEventListener("resize", onResize);
       };
     }
 

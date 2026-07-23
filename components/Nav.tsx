@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Icon from "./ui/Icon";
+import EarlyAccessButton from "./EarlyAccessButton";
 
 const NAV_LINKS = [
   { href: "#compare", label: "vs Agency" },
@@ -69,12 +70,9 @@ export default function Nav() {
           >
             Sign in
           </a>
-          <a
-            href={APP_URL}
-            className="btn-lift btn-pill btn-pill-primary btn-pill-sm hidden md:inline-flex focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-page"
-          >
+          <EarlyAccessButton className="btn-lift btn-pill btn-pill-primary btn-pill-sm hidden md:inline-flex focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-page">
             Get early access
-          </a>
+          </EarlyAccessButton>
           <button
             type="button"
             aria-label="Toggle mobile menu"
@@ -99,13 +97,12 @@ export default function Nav() {
               {link.label}
             </a>
           ))}
-          <a
-            href={APP_URL}
+          <EarlyAccessButton
             onClick={() => setOpen(false)}
             className="mt-2 btn-pill btn-pill-primary btn-pill-sm transition-colors"
           >
             Get early access
-          </a>
+          </EarlyAccessButton>
         </div>
       )}
       </nav>

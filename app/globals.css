@@ -382,6 +382,16 @@ html.js [data-reveal].is-inview {
   padding-inline: 1.5rem;
 }
 
+/* Orange accent fill — the site's warm sunset hue (~24°), reserved for the
+   highest-intent conversion action (the early-access form submit). */
+.btn-pill-accent {
+  background-color: hsl(24 90% 52%);
+  color: #fff;
+}
+.btn-pill-accent:hover {
+  background-color: hsl(24 90% 47%);
+}
+
 /* ---------------------------------------------------------------------------
    Hero eyebrow — pill with a cycling label and a flush circular chip.
    Geometry from the reference template. The asymmetric padding is load-bearing:
@@ -731,6 +741,23 @@ html.lenis body {
   pointer-events: none;
 }
 
+/* Slim, subtle horizontal scrollbar for the overflow-scroll comparison table —
+   the default OS bar is thick and heavy under it. */
+.scroll-x-thin {
+  scrollbar-width: thin;
+  scrollbar-color: hsl(var(--border)) transparent;
+}
+.scroll-x-thin::-webkit-scrollbar {
+  height: 6px;
+}
+.scroll-x-thin::-webkit-scrollbar-track {
+  background: transparent;
+}
+.scroll-x-thin::-webkit-scrollbar-thumb {
+  background: hsl(var(--border));
+  border-radius: 9999px;
+}
+
 /* Ridge layers are bottom-anchored; --raise lifts a layer off the bottom so its
    ridge clears the ones in front. On mobile the scape is far more zoomed (the
    images are pinned to min-width, well past the viewport), which exaggerates the
@@ -741,6 +768,15 @@ html.lenis body {
 @media (max-width: 640px) {
   .ridge-layer {
     bottom: calc(var(--raise, 0px) * 0.12);
+  }
+}
+/* Drop the hero mountain ranges 50px on desktop, giving the UI image more room to
+   sink into the trees as it scrolls. Scoped to .ridge-drop (hero scape only) so
+   DawnScape's ranges, which share .ridge-layer, are untouched. Desktop-only: the
+   mobile scape keeps its own tightened bottom above. */
+@media (min-width: 641px) {
+  .ridge-drop {
+    bottom: calc(var(--raise, 0px) - 50px);
   }
 }
 
