@@ -3,9 +3,6 @@
 import { CSSProperties, useEffect, useRef } from "react";
 
 /**
- * LOCAL DESIGN TEST — NOT SHIPPABLE (same caveat as HeroScape).
- * The ridge art under /public/scape is unlicensed placeholder — swap before prod.
- *
  * Closing "dawn" backdrop — the deliberate inverse of the hero's dusk, spanning
  * the whole closing zone (FAQ + CTA + footer). The hero opens on a warm horizon
  * and dissolves UP into black night; here the page ends by rising back OUT of the

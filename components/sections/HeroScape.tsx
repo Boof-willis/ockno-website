@@ -1,12 +1,6 @@
 /**
- * LOCAL DESIGN TEST — NOT SHIPPABLE.
- *
- * The art under /public/scape is pulled from a third-party Framer template and
- * is not licensed for ockno.com. It's gitignored. Swap in owned/licensed art
- * before this goes anywhere near production.
- *
  * Layered depth backdrop: a dusk gradient with three ridge layers parallaxing at
- * different rates.
+ * different rates. Ridge art (owned) lives under /public/scape/v2/*.webp.
  *
  * translateY = scrollY * factor, POSITIVE, applied by MotionInit via
  * [data-parallax-scroll]. Because it's positive it partially cancels the page's

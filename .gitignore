@@ -31,9 +31,9 @@ pnpm-debug.log*
 # vs code setting folder
 .vscode/
 
-# Local design test only — third-party template art, not licensed for ockno.com.
-# Remove this rig before shipping the hero.
-/public/scape/
+# Scape backdrop art (owned). Track the optimized .webp the site actually loads;
+# keep the large source .png exports out of the repo.
+public/scape/**/*.png
 
 # Claude Code local tooling
 .claude/
