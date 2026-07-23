@@ -67,7 +67,13 @@ export default function OldWay() {
       className="relative bg-black"
       style={{ height: "165vh" }}
     >
-      <div className="sticky top-0 h-screen flex items-center justify-center px-6">
+      {/* bg-black here too, not just on the section: WebKit paints a 165vh
+          single-color section in lazy tiles, and an unpainted tile shows the
+          body's bg-page through it — which reads as the NEXT section's
+          background intruding mid-text until a scroll repaints ("section
+          pop-in"). The sticky inner is viewport-sized and pinned on screen, so
+          its own background is always freshly painted and covers the band. */}
+      <div className="sticky top-0 h-screen flex items-center justify-center px-6 bg-black">
         <div className="max-w-[920px] mx-auto text-center">
           <div className="eyebrow justify-center mb-8">The old way</div>
           <p className="text-2xl md:text-4xl font-semibold tracking-tight leading-[1.4] text-foreground">

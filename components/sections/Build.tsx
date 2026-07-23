@@ -92,7 +92,10 @@ function PanelBg() {
 /* Panel 1 — the Brain forming, full-bleed, scrubbed by scroll. */
 function VisualTrain({ frame }: { frame: number }) {
   return (
-    <div className="relative w-full h-full h-full min-h-[300px] lg:min-h-0 rounded-2xl overflow-hidden bg-black flex items-center justify-center">
+    <div
+      data-visual="train"
+      className="relative w-full h-full h-full min-h-[300px] lg:min-h-0 rounded-2xl overflow-hidden bg-black flex items-center justify-center"
+    >
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src={FRAMES[frame]}
@@ -133,7 +136,10 @@ function VisualConnect() {
 /* Panel 3 — the payoff, as a floating glass card: cost per customer falling. */
 function VisualWatch() {
   return (
-    <div className="relative w-full h-full h-full min-h-[300px] lg:min-h-0 rounded-2xl overflow-hidden bg-nested flex items-center justify-center p-6 sm:p-10">
+    <div
+      data-visual="watch"
+      className="relative w-full h-full h-full min-h-[300px] lg:min-h-0 rounded-2xl overflow-hidden bg-nested flex items-center justify-center p-6 sm:p-10"
+    >
       <PanelBg />
 
       <div className="relative w-full max-w-[380px] rounded-2xl border border-foreground/10 bg-card/70 shadow-elevated p-6">
@@ -231,8 +237,15 @@ export default function Build() {
     let cpaLine: SVGPathElement | null = null;
     let cpaFill: SVGPathElement | null = null;
     let cpaDot: HTMLElement | null = null;
+    // The visual panels themselves — the scrub driver on stacked layouts.
+    let trainVisual: HTMLElement | null = null;
+    let watchVisual: HTMLElement | null = null;
     const update = () => {
       ticking = false;
+      // Below lg the cards stack text-above-visual into a tall column, so a
+      // card's top rect is a bad proxy for whether its VISUAL is on screen —
+      // the two scrubs below switch to the visual's own rect there.
+      const desktop = window.matchMedia("(min-width: 1024px)").matches;
       document.documentElement.style.setProperty(
         "--ring-rot",
         `${(window.scrollY * 0.18).toFixed(1)}deg`,
@@ -251,14 +264,25 @@ export default function Build() {
           if (cpaLine) cpaLine.style.strokeDasharray = "1";
         }
         if (cpaLine) {
-          const r3 = c3.getBoundingClientRect();
           const vh = window.innerHeight;
-          // Draw as the card rises: starts as it enters the bottom of the
-          // viewport and finishes (line fully illuminated) once the card top is
-          // ~15% down — a longer scroll, completing just before it pins.
+          // Desktop: the 480px sticky card rises as one unit, so its own rect
+          // is the right driver — the line completes just before the card pins.
+          // Stacked (mobile): the graph sits at the BOTTOM of a tall card and
+          // only enters the frame long after the card top does, which left the
+          // line ~fully drawn before it was ever visible. Drive off the
+          // visual's own rect instead: it starts as the panel crosses the
+          // viewport bottom and completes with the graph mid-frame.
+          const drv = desktop
+            ? c3.getBoundingClientRect()
+            : (
+                watchVisual ??
+                (watchVisual =
+                  c3.querySelector<HTMLElement>('[data-visual="watch"]')) ??
+                c3
+              ).getBoundingClientRect();
           const prog = Math.min(
             1,
-            Math.max(0, (vh * 0.95 - r3.top) / (vh * 0.8)),
+            Math.max(0, (vh * 0.95 - drv.top) / (vh * (desktop ? 0.8 : 0.55))),
           );
           cpaLine.style.strokeDashoffset = `${(1 - prog).toFixed(4)}`;
           if (cpaFill) cpaFill.style.opacity = `${Math.max(0, (prog - 0.15) / 0.85).toFixed(3)}`;
@@ -271,27 +295,44 @@ export default function Build() {
       // just after the fade begins rather than freezing incomplete before it.
       const el = cardRefs.current[0];
       if (el) {
-        const r = el.getBoundingClientRect();
         const vh = window.innerHeight;
         const LAST = FRAME_COUNT - 1;
-        const TAIL = 4; // last frames reserved to complete during the fade
-        // 0 as the card sits low → 1 exactly as it reaches the pin.
-        const rise = Math.min(1, Math.max(0, (vh * 0.8 - r.top) / (vh * 0.8 - PIN)));
-        // How far card 2 has risen over card 1 (its fade progress).
-        let cover = 0;
-        const next = cardRefs.current[1];
-        const h = r.height;
-        if (next && h) {
-          cover = Math.min(
-            1,
-            Math.max(0, (PIN + h - next.getBoundingClientRect().top) / h),
+        let idx: number;
+        if (desktop) {
+          const r = el.getBoundingClientRect();
+          const TAIL = 4; // last frames reserved to complete during the fade
+          // 0 as the card sits low → 1 exactly as it reaches the pin.
+          const rise = Math.min(1, Math.max(0, (vh * 0.8 - r.top) / (vh * 0.8 - PIN)));
+          // How far card 2 has risen over card 1 (its fade progress).
+          let cover = 0;
+          const next = cardRefs.current[1];
+          const h = r.height;
+          if (next && h) {
+            cover = Math.min(
+              1,
+              Math.max(0, (PIN + h - next.getBoundingClientRect().top) / h),
+            );
+          }
+          // Build to (LAST - TAIL) on the rise; the last TAIL frames fill in
+          // over the first quarter of the fade, so it lands full a few frames in.
+          idx = Math.round(
+            Math.min(LAST, rise * (LAST - TAIL) + Math.min(1, cover / 0.25) * TAIL),
           );
+        } else {
+          // Stacked (mobile): same trap as the CPA line — the Brain panel sits
+          // at the bottom of a tall card, so card-top math finishes the build
+          // before the panel is on screen. Scrub off the visual's own rect:
+          // first frame as it crosses the viewport bottom, final frame once its
+          // top reaches ~35% of the screen — the whole build plays in view.
+          const vr = (
+            trainVisual ??
+            (trainVisual =
+              el.querySelector<HTMLElement>('[data-visual="train"]')) ??
+            el
+          ).getBoundingClientRect();
+          const prog = Math.min(1, Math.max(0, (vh * 0.95 - vr.top) / (vh * 0.6)));
+          idx = Math.round(prog * LAST);
         }
-        // Build to (LAST - TAIL) on the rise; the last TAIL frames fill in over
-        // the first quarter of the fade, so it lands full a few frames in.
-        const idx = Math.round(
-          Math.min(LAST, rise * (LAST - TAIL) + Math.min(1, cover / 0.25) * TAIL),
-        );
         if (idx !== lastFrame) {
           lastFrame = idx;
           setFrame(idx);
@@ -301,7 +342,6 @@ export default function Build() {
       // Sticky-stack recede (desktop only): as the next card rises to cover this
       // one, this card scales down and dims behind it. Inline styles are cleared
       // when uncovered so the entrance reveal still governs.
-      const desktop = window.matchMedia("(min-width: 1024px)").matches;
       const cards = cardRefs.current;
       for (let i = 0; i < cards.length; i++) {
         const outer = cards[i];
