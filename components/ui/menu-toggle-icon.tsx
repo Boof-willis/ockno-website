@@ -36,22 +36,23 @@ export function MenuToggleIcon({
 			}}
 			{...props}
 		>
-			{/* Dash values are set inline rather than via Tailwind arbitrary
-			    classes ([stroke-dasharray:12_63]). Both icons showed at once in
-			    mobile Safari: the hamburger and the X are the SAME path, masked
-			    down to different segments by the dash — so if those declarations
-			    don't land, the whole path strokes and you see both at once.
-			    Inline style is the most reliable way to set SVG geometry
-			    properties, and even where the transition can't interpolate the
-			    end state is still correct. The closed state also declares an
-			    explicit dashoffset (it was previously unset) so both ends of the
-			    transition are defined instead of animating from a default. */}
+			{/* Dash values are SVG presentation ATTRIBUTES, not CSS (neither
+			    Tailwind arbitrary classes nor inline style). The hamburger and
+			    the X are the SAME path, masked down to different segments by the
+			    dash — and mobile Safari failed to apply the dash geometry from
+			    CSS, so the whole path stroked and both glyphs rendered stacked.
+			    Attribute parsing of dash lists is original SVG 1.1 behavior and
+			    lands in every engine; attributes sit at the bottom of the
+			    cascade, so keep any dash styling OUT of CSS or it will silently
+			    override these. Engines that transition presentation-attribute
+			    changes still animate the morph via transition-all; those that
+			    don't just snap to the correct end state. */}
 			<path
 				className="transition-all ease-in-out"
+				strokeDasharray={open ? '20 300' : '12 63'}
+				strokeDashoffset={open ? '-32.42' : '0'}
 				style={{
 					transitionDuration: `${duration}ms`,
-					strokeDasharray: open ? '20 300' : '12 63',
-					strokeDashoffset: open ? '-32.42px' : '0px',
 				}}
 				d="M27 10 13 10C10.8 10 9 8.2 9 6 9 3.5 10.8 2 13 2 15.2 2 17 3.8 17 6L17 26C17 28.2 18.8 30 21 30 23.2 30 25 28.2 25 26 25 23.8 23.2 22 21 22L7 22"
 			/>

@@ -29,14 +29,14 @@ export default function Cta() {
           data-reveal={60}
           className="text-4xl md:text-6xl font-semibold tracking-tight text-balance text-foreground mb-6"
         >
-          Give your growth a team, <br className="hidden sm:block" />
-          <span className="text-muted-foreground">not a retainer.</span>
+          Stop buying clicks. <br className="hidden sm:block" />
+          <span className="text-muted-foreground">Start buying customers.</span>
         </h2>
 
         <p data-reveal={120} className="text-lg text-muted-foreground mb-8 max-w-xl mx-auto">
-          Stop renting a distracted account manager or wrestling one more tool.
-          Get a 24/7 AI team that builds it all and runs it for you — for a
-          fraction of the price.
+          Ockno builds and runs your whole marketing stack, then tracks every
+          lead from the ad click to the closed sale, so your campaigns finally
+          optimize for revenue.
         </p>
 
         <div data-reveal={220} className="flex justify-center mb-6 mt-10">
