@@ -1,0 +1,56 @@
+const APP_URL = "https://app.ockno.com";
+
+/* Final CTA — bookends the hero: where the hero dissolves UP into night, the
+   close rises out of the dark into a sunrise. The dusk/dawn scape lives in
+   DawnScape; the copy sits over its night band, above the horizon. */
+export default function Cta() {
+  return (
+    <section id="cta" className="relative z-10 pt-28 md:pt-36 pb-[34vh] md:pb-[40vh]">
+      {/* Readability vignette — kept very light for now (vibrancy over contrast,
+          per the current pass). Feathered radial, transparent at the section top
+          so it never adds a line/seam. */}
+      <div
+        aria-hidden
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background:
+            "radial-gradient(135% 42% at 50% 32%, rgba(6,4,7,0.28) 0%, rgba(6,4,7,0.1) 46%, transparent 72%)",
+        }}
+      />
+
+      <div
+        className="max-w-[1440px] mx-auto px-6 relative z-10 text-center"
+        style={{ textShadow: "0 1px 22px rgba(0,0,0,0.55)" }}
+      >
+        <div className="eyebrow justify-center mb-6" data-reveal>
+          Get started
+        </div>
+        <h2
+          data-reveal={60}
+          className="text-4xl md:text-6xl font-semibold tracking-tight text-balance text-foreground mb-6"
+        >
+          Give your growth a team, <br className="hidden sm:block" />
+          <span className="text-muted-foreground">not a retainer.</span>
+        </h2>
+
+        <p data-reveal={120} className="text-lg text-muted-foreground mb-8 max-w-xl mx-auto">
+          Stop renting a distracted account manager or wrestling one more tool.
+          Get a 24/7 AI team that builds it all and runs it for you — for a
+          fraction of the price.
+        </p>
+
+        <div data-reveal={220} className="flex justify-center mb-6 mt-10">
+          <a
+            href={APP_URL}
+            className="btn-lift btn-pill btn-pill-primary w-full sm:w-auto focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-page"
+          >
+            Get early access
+          </a>
+        </div>
+        <p data-reveal={320} className="text-xs text-muted-foreground">
+          Now in early access · No retainers, ever
+        </p>
+      </div>
+    </section>
+  );
+}

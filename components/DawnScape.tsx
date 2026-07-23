@@ -1,0 +1,229 @@
+"use client";
+
+import { CSSProperties, useEffect, useRef } from "react";
+
+/**
+ * LOCAL DESIGN TEST — NOT SHIPPABLE (same caveat as HeroScape).
+ * The ridge art under /public/scape is unlicensed placeholder — swap before prod.
+ *
+ * Closing "dawn" backdrop — the deliberate inverse of the hero's dusk, spanning
+ * the whole closing zone (FAQ + CTA + footer). The hero opens on a warm horizon
+ * and dissolves UP into black night; here the page ends by rising back OUT of the
+ * dark: night sky behind the FAQ, the sun cresting the ridgeline over the CTA,
+ * and the footer as the lit foreground.
+ *
+ * The rise is scroll-driven here (not the ±44px [data-parallax] clamp, which is
+ * far too subtle across a scene this tall): a single rAF-throttled scroll handler
+ * maps the zone's progress through the viewport to an upward translate on the sun
+ * (it climbs as you scroll toward the footer) plus a gentle counter-drift on the
+ * ridges for depth. Transform/opacity only, static under reduced motion — the
+ * same iOS-safe contract as the rest of the codebase. Reuses the hero ridge art
+ * (/scape/v2/*) and the `.star` twinkle; the sky is a gradient.
+ */
+
+/* Night at the top (behind the FAQ) → deep warm twilight → a bright sunrise band
+   at the ridgeline (~60%), then darkening into the ground the near ridge sits on.
+   % stops are keyed to the full FAQ+CTA+footer height. */
+/* Warm orange sunrise — same family as the original, dialed brighter: warm-black
+   night up top → burnt orange → vivid amber → a bright gold band at the sun. */
+const DAWN_SKY =
+  "linear-gradient(to bottom," +
+  " #080706 0%," +
+  " #0b0908 30%," +
+  " #16110e 42%," +
+  " #301c12 49%," +
+  " #6a3617 54%," +
+  " #a85422 58%," +
+  " #dd7a2c 61%," +
+  " #fb9d38 64%," +
+  " #ffbb52 67%," +
+  " #ffd677 70%," +
+  " #ffe9ac 73%," +
+  " #eaa356 78%," +
+  " #7c4a28 88%," +
+  " #2c1a10 100%)";
+
+/* Deterministic star field over the night band (top ~44% — behind the FAQ), so
+   SSR and client render byte-identical. A dense, bright field so the FAQ clearly
+   reads as sitting under a starlit night sky. */
+const STARS: Array<{ x: number; y: number; s: number; o: number; du: number; de: number }> = [
+  { x: 4, y: 6, s: 2, o: 0.8, du: 3.6, de: 0.2 },
+  { x: 9, y: 18, s: 1.5, o: 0.6, du: 4.2, de: 1.2 },
+  { x: 14, y: 9, s: 2.5, o: 0.9, du: 3.9, de: 0.6 },
+  { x: 18, y: 27, s: 1.5, o: 0.55, du: 4.6, de: 1.8 },
+  { x: 23, y: 13, s: 2, o: 0.75, du: 3.2, de: 0.9 },
+  { x: 28, y: 33, s: 1.5, o: 0.5, du: 4.4, de: 0.4 },
+  { x: 32, y: 5, s: 3, o: 0.95, du: 3.7, de: 1.5 },
+  { x: 37, y: 22, s: 1.5, o: 0.6, du: 4.8, de: 0.8 },
+  { x: 42, y: 11, s: 2, o: 0.72, du: 3.9, de: 2.0 },
+  { x: 46, y: 30, s: 1.5, o: 0.5, du: 4.1, de: 0.3 },
+  { x: 50, y: 16, s: 2.5, o: 0.85, du: 3.5, de: 1.3 },
+  { x: 54, y: 7, s: 2, o: 0.7, du: 3.8, de: 1.0 },
+  { x: 58, y: 25, s: 1.5, o: 0.55, du: 4.3, de: 1.9 },
+  { x: 62, y: 12, s: 2, o: 0.75, du: 3.4, de: 0.5 },
+  { x: 66, y: 34, s: 1.5, o: 0.48, du: 4.7, de: 1.6 },
+  { x: 70, y: 5, s: 3, o: 0.95, du: 3.6, de: 0.7 },
+  { x: 74, y: 20, s: 1.5, o: 0.6, du: 4.5, de: 1.4 },
+  { x: 78, y: 10, s: 2, o: 0.75, du: 3.9, de: 0.2 },
+  { x: 82, y: 29, s: 1.5, o: 0.5, du: 4.2, de: 1.1 },
+  { x: 86, y: 15, s: 2.5, o: 0.85, du: 3.3, de: 0.6 },
+  { x: 89, y: 6, s: 2, o: 0.72, du: 3.8, de: 1.7 },
+  { x: 92, y: 24, s: 1.5, o: 0.55, du: 4.6, de: 0.4 },
+  { x: 96, y: 12, s: 2.5, o: 0.88, du: 3.5, de: 1.3 },
+  { x: 98, y: 33, s: 1.5, o: 0.48, du: 4.4, de: 0.9 },
+  { x: 11, y: 38, s: 1.5, o: 0.42, du: 4.0, de: 0.5 },
+  { x: 25, y: 40, s: 1.5, o: 0.4, du: 4.3, de: 1.5 },
+  { x: 44, y: 39, s: 1.5, o: 0.42, du: 3.7, de: 0.8 },
+  { x: 63, y: 41, s: 1.5, o: 0.4, du: 4.5, de: 1.2 },
+  { x: 80, y: 38, s: 1.5, o: 0.42, du: 3.9, de: 0.3 },
+  { x: 94, y: 42, s: 1.5, o: 0.38, du: 4.2, de: 1.8 },
+];
+
+/* Later in the array = nearer = darker silhouette and higher z. `drift` is the
+   px of scroll-driven parallax: POSITIVE lags (distant range sinks slower than
+   the page), NEGATIVE leads (near foreground climbs faster). The spread between
+   them is what reads as depth — large on purpose so the scroll feels parallaxy. */
+const RIDGES = [
+  { key: "far", src: "/scape/v2/far.webp", raise: "11vh", brightness: 0.95, drift: 150 },
+  { key: "mid", src: "/scape/v2/mid.webp", raise: "3vh", brightness: 0.68, drift: 55 },
+  { key: "near", src: "/scape/v2/near.webp", raise: "-3vh", brightness: 0.4, drift: -110 },
+];
+
+export default function DawnScape() {
+  const zoneRef = useRef<HTMLDivElement | null>(null);
+  const sunRef = useRef<HTMLDivElement | null>(null);
+  const ridgeRefs = useRef<(HTMLDivElement | null)[]>([]);
+
+  useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    let ticking = false;
+    const update = () => {
+      ticking = false;
+      const zone = zoneRef.current;
+      if (!zone) return;
+      const rect = zone.getBoundingClientRect();
+      const vh = window.innerHeight || 1;
+      // 0 as the zone's top reaches the viewport bottom, 1 once it has scrolled a
+      // full zone-height past — i.e. as the footer comes into view.
+      const p = Math.max(0, Math.min(1, (vh - rect.top) / (rect.height || 1)));
+
+      if (sunRef.current) {
+        // Starts low on the horizon and only begins to rise — a gentle climb, not
+        // a full ascent. Visible scroll range (p≈0.5→1) lifts it ~60px.
+        const rise = (0.5 - p) * 120;
+        sunRef.current.style.transform = `translate(-50%, calc(-50% + ${rise.toFixed(1)}px))`;
+        sunRef.current.style.opacity = (0.8 + p * 0.2).toFixed(3);
+      }
+      for (let i = 0; i < RIDGES.length; i++) {
+        const el = ridgeRefs.current[i];
+        if (el) el.style.transform = `translateY(${((p - 0.5) * RIDGES[i].drift).toFixed(1)}px)`;
+      }
+    };
+
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(update);
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    update();
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+    };
+  }, []);
+
+  return (
+    <div
+      ref={zoneRef}
+      aria-hidden
+      className="absolute inset-0 overflow-hidden z-0 pointer-events-none"
+    >
+      {/* Sky */}
+      <div className="absolute inset-0" style={{ background: DAWN_SKY }} />
+
+      {/* Seam: a short blend from the card-dark section above into the black night
+          sky, so the FAQ flows in with no line — and the rest of the FAQ stays
+          solid black under the stars. */}
+      <div
+        className="absolute inset-x-0 top-0 h-[10vh]"
+        style={{ background: "linear-gradient(to bottom, hsl(var(--background-card)), transparent)" }}
+      />
+
+      {/* Stars, masked to the night band so they vanish before the sunrise. */}
+      <div
+        className="absolute inset-0"
+        style={{
+          maskImage: "linear-gradient(to bottom, black 0%, black 44%, transparent 52%)",
+          WebkitMaskImage: "linear-gradient(to bottom, black 0%, black 44%, transparent 52%)",
+        }}
+      >
+        {STARS.map((st, i) => (
+          <span
+            key={i}
+            className="star"
+            style={
+              {
+                left: `${st.x}%`,
+                top: `${st.y}%`,
+                width: st.s,
+                height: st.s,
+                "--base": st.o,
+                animationDuration: `${st.du}s`,
+                animationDelay: `${st.de}s`,
+              } as CSSProperties
+            }
+          />
+        ))}
+      </div>
+
+      {/* The sun — a warm glow that climbs the sky as you scroll to the footer.
+          JS owns its transform (centering + rise); the SSR/reduced-motion default
+          is simply centered at its resting height. */}
+      <div
+        ref={sunRef}
+        className="absolute left-1/2 top-[74%] rounded-full will-change-transform"
+        style={{
+          transform: "translate(-50%, -50%)",
+          width: "min(128vw, 1040px)",
+          height: "min(128vw, 1040px)",
+          background:
+            "radial-gradient(circle, rgba(255,250,232,1) 0%, rgba(255,214,142,0.78) 11%, rgba(255,168,82,0.42) 24%, rgba(255,120,54,0.16) 40%, transparent 56%)",
+        }}
+      />
+
+      {/* Ridges — bottom-anchored silhouettes, near-black in front, lighter in the
+          distance. JS gives each a gentle counter-drift for depth as the sun rises. */}
+      {RIDGES.map((r, i) => (
+        <div
+          key={r.key}
+          ref={(el) => {
+            ridgeRefs.current[i] = el;
+          }}
+          className="ridge-layer absolute left-0 w-full will-change-transform"
+          style={{ "--raise": r.raise, zIndex: i + 1 } as CSSProperties}
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={r.src}
+            alt=""
+            width={2560}
+            height={1429}
+            draggable={false}
+            className="relative left-1/2 -translate-x-1/2 w-full min-w-[1400px] max-w-none h-auto select-none"
+            style={{ filter: `brightness(${r.brightness}) saturate(1.35)` }}
+          />
+        </div>
+      ))}
+
+      {/* Overall dim — knocks the whole scene back a touch. Sits above the ridges
+          (z-5) so it dims them too; tune this single alpha to taste. */}
+      <div
+        className="absolute inset-0"
+        style={{ background: "rgba(4,2,0,0.16)", zIndex: 5 }}
+      />
+    </div>
+  );
+}

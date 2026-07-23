@@ -1,0 +1,11 @@
+<svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="HighLevel">
+  <!-- Yellow arrow (left, tall) -->
+  <path d="M18 42 L38 14 L58 42 L47 42 L47 104 L29 104 L29 42 Z" fill="#FBC012"/>
+  <path d="M38 14 L58 42 L47 42 L38 30 Z" fill="#E1A400"/>
+  <!-- Green arrow (right, tall) -->
+  <path d="M62 40 L82 12 L102 40 L91 40 L91 104 L73 104 L73 40 Z" fill="#46C13F"/>
+  <path d="M82 12 L102 40 L91 40 L82 28 Z" fill="#35A82F"/>
+  <!-- Blue arrow (center, short, front) -->
+  <path d="M42 68 L60 44 L78 68 L68 68 L68 104 L52 104 L52 68 Z" fill="#2E97F1"/>
+  <path d="M60 44 L78 68 L68 68 L60 57 Z" fill="#1E82DC"/>
+</svg>

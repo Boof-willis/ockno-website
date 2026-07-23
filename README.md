@@ -1,64 +1,48 @@
 # Ockno Website 2.0
 
-Modern landing page for Ockno - an offline outcome signals platform built with Astro and Tailwind CSS.
+Marketing site for **Ockno** — the AI operator for paid acquisition and the
+lead lifecycle. Built with Next.js (App Router) and Tailwind CSS.
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Prerequisites
+- Node.js 18.18+ (Node 20+ recommended)
+- npm
 
-- Node.js 18+ 
-- npm, pnpm, or yarn
-
-### Installation
-
+### Install & run
 ```bash
-# Install dependencies
 npm install
-```
-
-### Development
-
-```bash
-# Start dev server
 npm run dev
 ```
-
-Visit `http://localhost:4321` to view the site.
+Visit `http://localhost:3000`.
 
 ### Build
-
 ```bash
-# Build for production
 npm run build
-
-# Preview production build
-npm run preview
+npm start
 ```
 
-## 📁 Project Structure
-
+## Project Structure
 ```
-/
-├── public/          # Static assets
-├── src/
-│   └── pages/
-│       └── index.astro   # Landing page
-├── astro.config.mjs      # Astro configuration
-├── tailwind.config.mjs   # Tailwind configuration
-└── package.json
+app/
+  layout.tsx              # fonts (Sentient + JetBrains Mono), metadata, globals
+  page.tsx                # landing page (composes sections)
+  privacy-policy/page.tsx
+  terms/page.tsx
+  globals.css
+components/
+  sections/               # landing page sections
+  Nav.tsx, Footer.tsx, HeroBackdrop.tsx, LegalShell.tsx
+  ui/Icon.tsx             # @iconify/react wrapper
+public/                   # fonts, images
+tailwind.config.ts
 ```
 
-## 🛠️ Tech Stack
+## Tech Stack
+- **Framework:** Next.js 16 (App Router), React 19, TypeScript
+- **Styling:** Tailwind CSS 3.4 (CSS-variable design tokens, dark + orange)
+- **Icons:** @iconify/react
+- **Fonts:** Sentient (self-hosted) + JetBrains Mono (`next/font`)
 
-- **Framework**: [Astro](https://astro.build)
-- **Styling**: [Tailwind CSS](https://tailwindcss.com)
-- **Icons**: [Iconify](https://iconify.design)
-- **Fonts**: Inter & JetBrains Mono (Google Fonts)
-
-## 📝 License
-
-© 2024 Ockno Inc.
-
-
-# ockno
-# ockno
+## License
+© 2026 Ockno, Inc.

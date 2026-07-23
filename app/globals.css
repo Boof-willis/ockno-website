@@ -1,0 +1,1087 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ---------------------------------------------------------------------------
+   Design tokens — warm-tinted neutrals (hue ~30°), monochrome accent,
+   elevation-by-fill.
+
+   Dark is the only theme. There is no toggle, no persisted preference, and no
+   prefers-color-scheme switch: the site is dark, full stop.
+
+   `.light` re-scopes the palette to a subtree for sections built light. Token
+   names are identical in both, so nothing downstream needs to know which it's
+   under — put `light` on a section and everything inside resolves against the
+   cream palette.
+--------------------------------------------------------------------------- */
+:root {
+  color-scheme: dark;
+
+  --background: 30 7% 13%;
+  --foreground: 30 7% 92%;
+  --background-page: 30 9% 8%; /* warm near-black #161311 canvas */
+  --background-card: 30 7% 12%;
+  --background-nested: 30 7% 16%;
+
+  --card: 30 7% 12%;
+  --card-foreground: 30 7% 92%;
+
+  --muted: 30 7% 16%;
+  --muted-foreground: 30 5% 65%;
+  --accent: 30 8% 20%;
+
+  /* Monochrome accent: emphasis comes from contrast, not hue. On dark the
+     primary is the warm off-white. */
+  --primary: 12 100% 97%;
+  --primary-hover: 0 0% 100%;
+  --primary-muted: 12 30% 86%;
+  --primary-foreground: 24 10% 12%; /* ink text on off-white */
+
+  --border: 30 6% 19%;
+  --input: 30 6% 19%;
+  --ring: 12 100% 97%;
+
+  --success: 142 71% 45%;
+  --warning: 48 96% 53%;
+  --destructive: 0 84% 60%;
+
+  --card-radius: 1.25rem; /* 20px distinctly-rounded cards */
+  --radius: 0.5rem;
+
+  --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.3);
+  --shadow-elevated: 0 4px 16px rgba(0, 0, 0, 0.4);
+}
+
+/* Opt a subtree into the light palette: <section className="light">. */
+.light {
+  color-scheme: light;
+
+  --background: 0 0% 100%;
+  --foreground: 24 10% 12%;
+  --background-page: 40 22% 97%; /* warm off-white / cream canvas */
+  --background-card: 0 0% 100%;
+  --background-nested: 40 18% 96%;
+
+  --card: 0 0% 100%;
+  --card-foreground: 24 10% 12%;
+
+  --muted: 40 16% 95%;
+  --muted-foreground: 30 6% 42%;
+  --accent: 40 16% 93%;
+
+  /* Inverted on light: the primary becomes the near-black ink. */
+  --primary: 24 10% 12%;
+  --primary-hover: 24 10% 24%;
+  --primary-muted: 24 8% 34%;
+  --primary-foreground: 40 22% 97%; /* cream text on ink */
+
+  --border: 36 14% 88%;
+  --input: 36 14% 88%;
+  --ring: 24 10% 12%;
+
+  --success: 142 60% 40%;
+  --warning: 38 92% 50%;
+  --destructive: 0 72% 51%;
+
+  --shadow-card: 0 1px 2px rgba(24, 18, 12, 0.05), 0 8px 24px rgba(24, 18, 12, 0.05);
+  --shadow-elevated: 0 4px 28px rgba(24, 18, 12, 0.09);
+}
+
+@layer base {
+  html {
+    /* auto, not smooth: Lenis (components/SmoothScroll.tsx) owns all smooth
+       scrolling now — wheel and anchor jumps alike. A native `smooth` here would
+       fight Lenis's per-frame scroll updates. Under reduced motion Lenis is
+       disabled and this correctly stays instant. */
+    scroll-behavior: auto;
+  }
+
+  body {
+    background: hsl(var(--background-page));
+    color: hsl(var(--foreground));
+    /* Body/paragraph copy: Instrument Sans, with a slightly tight tracking and
+       leading to match the reference paragraph treatment. */
+    font-family: var(--font-body), system-ui, -apple-system, sans-serif;
+    font-weight: 400;
+    letter-spacing: -0.03em;
+    line-height: 1.35;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+  }
+
+  /* Ockno Operator is reserved for display type; body copy stays in
+     Instrument Sans for comfortable reading at smaller sizes. */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-sans), system-ui, -apple-system, sans-serif;
+    font-weight: 500;
+    font-kerning: normal;
+  }
+
+  :focus-visible {
+    outline: 2px solid hsl(var(--ring));
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  /* Composite the fixed nav on its own layer */
+  nav[class*="fixed"] {
+    -webkit-transform: translateZ(0);
+    -webkit-backface-visibility: hidden;
+  }
+
+  img,
+  video,
+  iframe {
+    content-visibility: auto;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Elevation-by-fill utilities (canvas → card → nested), matching the app.
+--------------------------------------------------------------------------- */
+@layer components {
+  .card-elevated {
+    /* Soft top-light wash over the card fill — reads "lit from above". */
+    background:
+      linear-gradient(180deg, hsl(var(--foreground) / 0.025), transparent 36%),
+      hsl(var(--card));
+    border: 1px solid hsl(var(--border));
+    border-radius: var(--card-radius);
+    /* Hairline inner highlight along the top edge. */
+    box-shadow:
+      var(--shadow-card),
+      inset 0 1px 0 0 hsl(var(--foreground) / 0.05);
+  }
+
+  .card-nested {
+    background: hsl(var(--background-nested));
+    border: 1px solid hsl(var(--border));
+    border-radius: var(--radius);
+  }
+
+  /* Section eyebrow — the brand marker above every section headline. */
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: hsl(var(--primary));
+  }
+  .eyebrow::before {
+    content: "";
+    width: 6px;
+    height: 6px;
+    border-radius: 9999px;
+    background: hsl(var(--primary));
+    box-shadow: 0 0 10px hsl(var(--primary) / 0.7);
+  }
+
+  /* Icon tile — the one icon treatment used across all cards. */
+  .icon-tile {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border-radius: 0.75rem;
+    color: hsl(var(--primary));
+    background: linear-gradient(
+      180deg,
+      hsl(var(--primary) / 0.15),
+      hsl(var(--primary) / 0.05)
+    );
+    border: 1px solid hsl(var(--primary) / 0.2);
+    box-shadow: inset 0 1px 0 hsl(var(--primary) / 0.15);
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Decorative helpers
+--------------------------------------------------------------------------- */
+.bg-noise {
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
+}
+
+.grid-bg {
+  background-size: 50px 50px;
+  background-image: linear-gradient(to right, hsl(var(--foreground) / 0.03) 1px, transparent 1px),
+    linear-gradient(to bottom, hsl(var(--foreground) / 0.03) 1px, transparent 1px);
+}
+
+.perspective-1000 {
+  perspective: 1000px;
+}
+
+/* ---------------------------------------------------------------------------
+   Motion system — premium entrance + scroll choreography.
+   Transform/opacity only (no filter/backdrop animations): iOS-safe.
+--------------------------------------------------------------------------- */
+:root {
+  --ease-premium: cubic-bezier(0.16, 1, 0.3, 1); /* expo-out: fast start, long settle */
+}
+
+/* Anchored sections shouldn't hide under the fixed nav. */
+section[id] {
+  scroll-margin-top: 88px;
+}
+
+/* Load-time entrance (hero) — longer, softer, expo-out. `both` keeps elements
+   hidden through their stagger delay. */
+.animate-fade-in-up {
+  animation: fade-in-up 900ms var(--ease-premium) both;
+}
+
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(26px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Hero dashboard mock — deeper rise + settle-from-scale. */
+.animate-mock-in {
+  animation: mock-in 1200ms var(--ease-premium) 480ms both;
+}
+
+@keyframes mock-in {
+  from {
+    opacity: 0;
+    transform: translateY(44px) scale(0.965);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Nav fades down once on load. Opacity-only: the nav owns transform for its
+   compositing layer. */
+html.js .nav-bar {
+  animation: nav-in 700ms ease-out 80ms both;
+}
+
+@keyframes nav-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Scroll reveals — hidden state only applies when JS is present (html.js), so
+   content is never invisible without it. MotionInit adds .is-inview once. */
+html.js [data-reveal] {
+  opacity: 0;
+  transform: translateY(30px);
+  transition:
+    opacity 1s var(--ease-premium),
+    transform 1s var(--ease-premium);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+html.js [data-reveal][data-reveal-from="left"] {
+  transform: translateX(-36px);
+}
+html.js [data-reveal][data-reveal-from="right"] {
+  transform: translateX(36px);
+}
+html.js [data-reveal][data-reveal-from="scale"] {
+  transform: translateY(22px) scale(0.96);
+}
+html.js [data-reveal].is-inview {
+  opacity: 1;
+  transform: none;
+}
+
+/* Buttons — lift on hover, settle on press. */
+.btn-lift {
+  transition:
+    transform 0.3s var(--ease-premium),
+    box-shadow 0.3s var(--ease-premium),
+    background-color 0.15s ease,
+    border-color 0.15s ease;
+}
+.btn-lift:hover {
+  transform: translateY(-2px);
+}
+.btn-lift:active {
+  transform: translateY(0) scale(0.98);
+  transition-duration: 0.1s;
+}
+/* Primary CTA glow — retained for any caller that still opts in, but the pill
+   buttons below deliberately omit it: the reference system is shadowless and a
+   halo around a monochrome button just reads as smudge. */
+.btn-glow:hover {
+  box-shadow:
+    0 8px 28px -8px hsl(var(--primary) / 0.55),
+    0 2px 10px -2px hsl(var(--primary) / 0.35);
+}
+
+/* ---------------------------------------------------------------------------
+   Pill buttons — fully-rounded, shadowless, translucent-fill.
+   Geometry lifted from the reference template: 48px tall, 36px side padding,
+   14px/400 label. Emphasis is carried by fill opacity, not hue.
+
+   The reference also sets backdrop-filter: blur(5px) on its nav button. That is
+   deliberately NOT copied — backdrop-filter was stripped from this codebase in
+   1beacd0 for causing mobile scroll flicker.
+--------------------------------------------------------------------------- */
+.btn-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.375rem;
+  height: 3rem;
+  padding-inline: 2.25rem;
+  border-radius: 9999px;
+  font-size: 0.875rem;
+  font-weight: 400;
+  white-space: nowrap;
+}
+
+/* Solid-ish fill. 0.8 alpha lets the backdrop tint it, which is what keeps it
+   from looking like a flat white slab on the photographic layers. */
+.btn-pill-primary {
+  background-color: hsl(var(--primary) / 0.8);
+  color: hsl(var(--primary-foreground));
+}
+.btn-pill-primary:hover {
+  background-color: hsl(var(--primary));
+}
+
+/* Ghost fill — the same ink at low alpha. */
+.btn-pill-ghost {
+  background-color: hsl(var(--foreground) / 0.1);
+  color: hsl(var(--foreground));
+}
+.btn-pill-ghost:hover {
+  background-color: hsl(var(--foreground) / 0.16);
+}
+
+/* Compact variant for the nav. */
+.btn-pill-sm {
+  height: 2.25rem;
+  padding-inline: 1.5rem;
+}
+
+/* ---------------------------------------------------------------------------
+   Hero eyebrow — pill with a cycling label and a flush circular chip.
+   Geometry from the reference template. The asymmetric padding is load-bearing:
+   4px on the right lets the 23px chip sit flush inside the 30px pill, while the
+   label keeps an 8px inset on the left.
+--------------------------------------------------------------------------- */
+.eyebrow-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  height: 1.875rem;
+  padding: 4px 4px 4px 8px;
+  border-radius: 9999px;
+  background-color: hsl(var(--foreground) / 0.1);
+  color: hsl(var(--foreground));
+  font-size: 0.75rem;
+  font-weight: 400;
+  line-height: 1;
+  white-space: nowrap;
+  transition: background-color 0.2s ease;
+}
+.eyebrow-pill:hover {
+  background-color: hsl(var(--foreground) / 0.16);
+}
+
+/* Marquee viewport. Fixed width so the pill's size never depends on which item
+   happens to be passing through. Masked at both edges — the reference hard-clips
+   its text, which it gets away with because every one of its items is the same
+   string; with items of differing length a hard cut reads as broken glyphs.
+   mask-image only — no backdrop-filter (see 1beacd0). */
+.eyebrow-viewport {
+  position: relative;
+  overflow: hidden;
+  width: 15.5rem;
+  mask-image: linear-gradient(
+    to right,
+    transparent 0,
+    black 12px,
+    black calc(100% - 12px),
+    transparent 100%
+  );
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent 0,
+    black 12px,
+    black calc(100% - 12px),
+    transparent 100%
+  );
+}
+
+/* Two copies of the item set sit in this track; translating -50% lands exactly
+   on the start of copy two, so the loop is seamless. Duration is set inline from
+   the measured width to hold ~25px/s. */
+.eyebrow-track {
+  display: flex;
+  width: max-content;
+  gap: 36px;
+  animation-name: eyebrow-marquee;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  will-change: transform;
+}
+.eyebrow-item {
+  flex: none;
+  white-space: nowrap;
+}
+
+@keyframes eyebrow-marquee {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+/* Freeze while hovered — the whole point is that it's a link, and chasing a
+   moving target to click it is hostile. */
+.eyebrow-pill:hover .eyebrow-track,
+.eyebrow-pill:focus-visible .eyebrow-track {
+  animation-play-state: paused;
+}
+
+/* ---------------------------------------------------------------------------
+   Device — a laptop built from CSS 3D transforms. No model file, no WebGL.
+
+   The lid hinges from its BOTTOM edge, the base from its TOP edge, and both
+   meet on the hinge line. In CSS a positive rotateX tips an element's top away
+   from the viewer, so:
+
+     lid  rotateX(90deg - var(--lid))   90 = upright/open, 0 = folded onto base
+     base rotateX(90deg)                lies flat, receding
+
+   At --lid: 0 both planes coincide — the thing is shut. That makes --lid a real
+   hinge axis, so a scroll-driven open is just animating one custom property.
+
+   Geometry authored here, not sourced: no model licence, no Apple trade dress.
+--------------------------------------------------------------------------- */
+.device {
+  position: relative;
+  width: 100%;
+  perspective: var(--depth, 2200px);
+  perspective-origin: 50% 35%;
+}
+
+.device-body {
+  position: relative;
+  transform-style: preserve-3d;
+  transform: rotateX(var(--view, 12deg));
+}
+
+/* --- Lid ---------------------------------------------------------------- */
+.device-lid {
+  position: relative;
+  transform-style: preserve-3d;
+  transform-origin: 50% 100%;
+  transform: rotateX(calc(90deg - var(--lid, 90deg)));
+  border-radius: 14px 14px 3px 3px;
+  padding: 9px 9px 16px;
+  background: linear-gradient(170deg, hsl(30 5% 26%), hsl(30 5% 17%));
+  box-shadow:
+    inset 0 1px 0 hsl(30 8% 42%),
+    inset 0 0 0 1px hsl(30 6% 12%);
+}
+
+.device-bezel {
+  position: relative;
+  border-radius: 5px;
+  background: hsl(30 8% 4%);
+  padding: 3px;
+  box-shadow: inset 0 0 0 1px hsl(30 6% 14%);
+}
+
+/* The slot. Real DOM — children render as live HTML. */
+.device-screen {
+  position: relative;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  border-radius: 3px;
+  background: hsl(var(--background-page));
+}
+.device-screen > * {
+  width: 100%;
+  height: 100%;
+}
+
+/* Raking sheen across the glass. pointer-events:none so it never eats a click
+   on live content underneath. */
+.device-glare {
+  position: absolute;
+  inset: 3px;
+  border-radius: 3px;
+  pointer-events: none;
+  background: linear-gradient(
+    102deg,
+    hsl(0 0% 100% / 0.07) 0%,
+    hsl(0 0% 100% / 0.02) 26%,
+    transparent 52%
+  );
+}
+
+/* Chin below the screen. */
+.device-lid::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 5px;
+  transform: translateX(-50%);
+  width: 52px;
+  height: 4px;
+  border-radius: 2px;
+  background: hsl(30 6% 30%);
+}
+
+/* --- Base --------------------------------------------------------------- */
+/* Absolutely positioned, hanging off the lid's bottom edge — two reasons:
+   a % height would resolve to zero against the auto-height parent, and an
+   in-flow box would reserve its FULL depth (~500px) in layout while projecting
+   to ~120px on screen, leaving a dead gap under the device. Absolute keeps the
+   flow height equal to the lid; the deck projects into space it doesn't own.
+   1.45 is roughly a real laptop's width:depth. */
+.device-base {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  transform-style: preserve-3d;
+  transform-origin: 50% 0;
+  transform: rotateX(90deg);
+  aspect-ratio: 1.45;
+}
+
+.device-deck {
+  position: absolute;
+  inset: 0;
+  border-radius: 3px 3px 12px 12px;
+  background: linear-gradient(hsl(30 5% 22%), hsl(30 5% 14%));
+  box-shadow:
+    inset 0 1px 0 hsl(30 8% 34%),
+    inset 0 0 0 1px hsl(30 6% 11%);
+}
+
+/* Front lip — the cutout you grip to open it. */
+.device-notch {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  transform: translateX(-50%);
+  width: 16%;
+  height: 5px;
+  border-radius: 6px 6px 0 0;
+  background: hsl(30 6% 9%);
+}
+
+/* --- Shadow ------------------------------------------------------------- */
+/* Outside the preserve-3d tree so the transforms don't drag it around. */
+.device-shadow {
+  position: absolute;
+  left: 8%;
+  right: 8%;
+  bottom: -3%;
+  height: 12%;
+  border-radius: 50%;
+  background: radial-gradient(
+    ellipse at center,
+    hsl(0 0% 0% / 0.5) 0%,
+    transparent 70%
+  );
+  z-index: -1;
+}
+
+/* ---------------------------------------------------------------------------
+   Star field — tiny lights over the dark sky, positioned + masked in
+   HeroScape. Each star carries its own --base resting opacity and a staggered
+   animation-delay/duration so the twinkle never marches in lockstep.
+--------------------------------------------------------------------------- */
+.star {
+  position: absolute;
+  border-radius: 9999px;
+  background: #fff;
+  opacity: var(--base, 0.5);
+  animation: star-twinkle ease-in-out infinite;
+}
+@keyframes star-twinkle {
+  0%,
+  100% {
+    opacity: var(--base, 0.5);
+    transform: scale(1);
+  }
+  50% {
+    opacity: calc(var(--base, 0.5) * 0.28);
+    transform: scale(0.82);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .star {
+    animation: none;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Shooting stars — occasional meteor streaks across the night sky.
+
+   Transform/opacity only, pure CSS (no JS, no per-frame main-thread work — same
+   iOS-safe contract as the ridges/parallax). The visible streak is a small early
+   slice of a long cycle, so the sky stays calm and a star fires every several
+   seconds; staggered durations/delays across a few of them keep the cadence
+   irregular rather than metronomic. The head leads at the right end; --ang
+   matches atan2(--sy, --sx) so the tail trails along the travel path.
+--------------------------------------------------------------------------- */
+.shooting-star {
+  position: absolute;
+  width: var(--len, 120px);
+  height: 2px;
+  border-radius: 9999px;
+  background: linear-gradient(to right, transparent, hsl(0 0% 100% / 0.9));
+  opacity: 0;
+  transform: rotate(var(--ang, 20deg));
+  animation: shooting-star var(--dur, 28s) linear var(--delay, 0s) infinite;
+}
+/* Bright head at the leading (right) end. */
+.shooting-star::after {
+  content: "";
+  position: absolute;
+  right: -1px;
+  top: 50%;
+  width: 3px;
+  height: 3px;
+  margin-top: -1.5px;
+  border-radius: 9999px;
+  background: #fff;
+  box-shadow: 0 0 8px 1px hsl(0 0% 100% / 0.7);
+}
+/* Leftward variant — head on the left, so a star starting on the right side of
+   the sky streaks INTO view rather than off the edge. Pair with negative --sx
+   and --ang in the data. */
+.shooting-star.rev {
+  background: linear-gradient(to left, transparent, hsl(0 0% 100% / 0.9));
+}
+.shooting-star.rev::after {
+  right: auto;
+  left: -1px;
+}
+@keyframes shooting-star {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 0, 0) rotate(var(--ang, 20deg));
+  }
+  1% {
+    opacity: 1;
+  }
+  5% {
+    opacity: 1;
+    transform: translate3d(var(--sx, 300px), var(--sy, 110px), 0)
+      rotate(var(--ang, 20deg));
+  }
+  6%,
+  100% {
+    opacity: 0;
+    transform: translate3d(var(--sx, 300px), var(--sy, 110px), 0)
+      rotate(var(--ang, 20deg));
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .shooting-star {
+    animation: none;
+    opacity: 0;
+  }
+}
+
+/* Lenis smooth-scroll base styles (see components/SmoothScroll.tsx). Only take
+   effect once Lenis adds its classes to <html>; native scroll otherwise. */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+.lenis.lenis-smooth iframe {
+  pointer-events: none;
+}
+
+/* Ridge layers are bottom-anchored; --raise lifts a layer off the bottom so its
+   ridge clears the ones in front. On mobile the scape is far more zoomed (the
+   images are pinned to min-width, well past the viewport), which exaggerates the
+   gap, so the raise is scaled down to keep the layers tight together. */
+.ridge-layer {
+  bottom: var(--raise, 0px);
+}
+@media (max-width: 640px) {
+  .ridge-layer {
+    bottom: calc(var(--raise, 0px) * 0.12);
+  }
+}
+
+/* The star field's visibility is now positional (it descends with the sky layer
+   and is masked to the black region) — see components/sections/HeroScape.tsx.
+   No scroll-driven opacity here. */
+
+/* Nearer ridges lose light as the sky falls to night: dim them on scroll. filter
+   applies to the image pixels only, so the transparent sky above the ridge is
+   untouched. Chromium via scroll-timeline here; Safari via JS in MotionInit. */
+@keyframes ridge-dim {
+  to {
+    filter: brightness(0.62);
+  }
+}
+@supports (animation-timeline: scroll()) {
+  html.st-anim [data-dim] {
+    animation: ridge-dim linear both;
+    animation-timeline: scroll(root block);
+    animation-range: 0 88vh;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Buttery scroll parallax — compositor-driven.
+
+   The ridge layers used to be transformed from a scroll listener: every frame
+   the main thread read scrollY and wrote translate3d, so the update always
+   landed a frame behind the actual scroll and visibly juddered.
+
+   Where CSS scroll-driven animations exist, we hand the exact same math to the
+   compositor instead. The animation's 0→1 progress is mapped across the first
+   100vh of scroll (animation-range), and the end keyframe is
+   translateY(100vh * --pfactor) — so at any scroll offset s within range the
+   layer sits at translateY(s * --pfactor), identical to the old JS path but with
+   zero per-frame main-thread work. MotionInit skips its JS parallax-scroll when
+   this @supports test passes, so the two never fight over transform.
+--------------------------------------------------------------------------- */
+@keyframes parallax-rise {
+  to {
+    transform: translate3d(0, calc(100vh * var(--pfactor, 0)), 0);
+  }
+}
+@supports (animation-timeline: scroll()) {
+  html.st-anim [data-parallax-scroll] {
+    animation: parallax-rise linear both;
+    animation-timeline: scroll(root block);
+    animation-range: 0 100vh;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Focus highlight — one idea lit at a time.
+   Idle sits at 0.25 (the reference's value); MotionInit adds .is-focus to
+   whichever item is nearest the focus line.
+
+   Gated on html.js, same contract as [data-reveal]: without JS nothing would
+   ever add .is-focus, and the whole section would sit dimmed forever.
+--------------------------------------------------------------------------- */
+html.js [data-focus-item] {
+  opacity: 0.25;
+  transition: opacity 0.5s var(--ease-premium);
+}
+html.js [data-focus-item].is-focus {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* MotionInit bails before the focus pass under reduced motion, so nothing
+     would ever light up. Show everything. */
+  html.js [data-focus-item] {
+    opacity: 1;
+    transition: none;
+  }
+}
+
+.eyebrow-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 1.4375rem;
+  height: 1.4375rem;
+  border-radius: 9999px;
+  background-color: hsl(var(--foreground) / 0.1);
+  transition: transform 0.3s var(--ease-premium);
+}
+.group:hover .eyebrow-chip {
+  transform: translateX(2px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* Park the track at the start; the first item stays readable and the link
+     still works. */
+  .eyebrow-track {
+    animation: none;
+    transform: none;
+  }
+  .group:hover .eyebrow-chip {
+    transform: none;
+  }
+}
+
+/* Stacked "how it works" cards — modeled on the reference: a translucent dark
+   fill (the section ghosts through, ~0.85 alpha) with a gradient "ghost border"
+   that's brighter along the top edge and fades toward the bottom. 16px radius. */
+.stack-card {
+  border-radius: 16px;
+  background:
+    linear-gradient(rgba(15, 15, 15, 0.85), rgba(15, 15, 15, 0.85)) padding-box,
+    linear-gradient(
+        180deg,
+        rgba(255, 255, 255, 0.16),
+        rgba(255, 255, 255, 0.03) 60%,
+        rgba(255, 255, 255, 0.02)
+      )
+      border-box;
+  border: 1px solid transparent;
+}
+
+/* Cards — quiet lift on hover. */
+.card-lift {
+  transition:
+    transform 0.45s var(--ease-premium),
+    box-shadow 0.45s var(--ease-premium),
+    border-color 0.3s ease;
+}
+.card-lift:hover {
+  transform: translateY(-4px);
+  box-shadow:
+    0 18px 44px -18px rgb(0 0 0 / 0.32),
+    0 4px 14px -4px rgb(0 0 0 / 0.14);
+  border-color: hsl(var(--foreground) / 0.18);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-fade-in-up,
+  .animate-mock-in,
+  html.js .nav-bar {
+    animation: none;
+  }
+  html.js [data-reveal] {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+  .btn-lift,
+  .btn-lift:hover,
+  .btn-lift:active,
+  .card-lift,
+  .card-lift:hover {
+    transform: none;
+    transition: none;
+  }
+}
+
+/* Rotating H1 — word-by-word vertical roll, clipped to the line.
+   The top/bottom padding (cancelled by equal negative margins) gives ascenders
+   and descenders room so glyphs like "g" aren't shaved; the clip still hides
+   words parked above/below the line. */
+.rot-words {
+  /* inline-block so the box hugs the ACTIVE phrase's width (not the widest one) */
+  display: inline-block;
+  position: relative;
+  vertical-align: baseline;
+  white-space: nowrap;
+  /* Clip top/bottom only (the roll); never clip the sides, so a wider exiting
+     phrase overlaid on a narrower current one isn't shaved horizontally. Top clip
+     sits at the line's own top so an exiting word can't rise into the static line;
+     generous bottom room keeps descenders whole. */
+  clip-path: inset(0 -100vw);
+  padding: 0 0 0.55em;
+  margin: 0 0 -0.55em;
+}
+
+.rot-phrase {
+  white-space: nowrap;
+  text-align: center;
+  /* Small left padding to nudge the dynamic line rightward, offsetting the
+     optical left-lean from the trailing period. */
+  padding-left: 0.25ch;
+}
+
+/* The active phrase stays in flow and defines the (centered) box width. */
+.rot-phrase[data-state="in"] {
+  display: block;
+}
+
+/* The animating phrases overlay without affecting width, centered on the box. */
+.rot-phrase[data-state="out"],
+.rot-phrase[data-state="below"] {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.rot-word {
+  display: inline-block;
+  will-change: transform, opacity;
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.31s ease;
+  /* Extend the (gradient) background box below the baseline so background-clip:
+     text still paints descenders like the tails of "g" and "y". */
+  padding-bottom: 0.3em;
+  margin-bottom: -0.3em;
+}
+
+.rot-phrase[data-state="in"] .rot-word {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+/* Parked clear of the line so an outgoing and an incoming phrase never share
+   the frame. */
+.rot-phrase[data-state="out"] .rot-word {
+  transform: translateY(-135%);
+  opacity: 0;
+}
+
+.rot-phrase[data-state="below"] .rot-word {
+  transform: translateY(135%);
+  opacity: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rot-word {
+    transition: none !important;
+  }
+  .rot-phrase[data-state="out"] .rot-word,
+  .rot-phrase[data-state="below"] .rot-word {
+    opacity: 0;
+  }
+}
+
+/* Navbar: transparent at the top, frosted glass once scrolled. The frost lives on
+   a masked pseudo-element so it fades from opaque at the top to fully transparent
+   at the bottom (no hard edge / border) while the logo and links stay sharp.
+   Scoped to the nav only (not a page-wide backdrop-filter) to avoid the iOS
+   momentum-scroll flicker that page-level blur/containment caused. */
+.nav-bar {
+  /* Clean stacking context so the frost layer stays self-contained. */
+  isolation: isolate;
+}
+
+/* Dark scrim under the nav — a short top-anchored gradient that fades in once
+   scrolled, so the nav's text/logo keep contrast over the bright hero scape.
+   Opacity-only transition; sits on its own layer so it never touches paint of
+   the nav content above it. */
+.nav-scrim {
+  height: 92px;
+  background: linear-gradient(
+    to bottom,
+    hsl(0 0% 0% / 1),
+    hsl(0 0% 0% / 0.55) 42%,
+    hsl(0 0% 0% / 0) 100%
+  );
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  transform: translateZ(0);
+  will-change: opacity;
+}
+.nav-scrim.is-visible {
+  opacity: 1;
+}
+
+/* "The old way" words start dim (JS present); the scroll handler lights each to
+   full as it passes. Only dimmed when JS runs, so no-JS keeps them legible. */
+html.js .oldway-word {
+  opacity: 0.18;
+}
+.nav-bar::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0;
+  /* Frost removed — any backdrop-filter blur smears the bright warm hero into a
+     whitish band, so it can never read as truly black. The nav's dark contrast
+     now comes entirely from .nav-scrim: a plain black→transparent gradient, no
+     blur. (Also drops the last backdrop-filter, so no iOS-flicker risk.) */
+  background: transparent;
+  transition: opacity 0.3s ease;
+  /* Pin the frost to its own GPU layer so its per-frame blur repaints don't
+     re-rasterize the nav's text/logo — that co-repaint is what flickers. */
+  transform: translateZ(0);
+  will-change: opacity;
+  backface-visibility: hidden;
+}
+.nav-bar.is-scrolled::before {
+  opacity: 1;
+}
+/* Keep the foreground (logo, links, buttons) on its own layer, above the frost,
+   so it composites independently and stays rock-steady while scrolling. */
+.nav-inner {
+  position: relative;
+  z-index: 1;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+/* Marquee animation - slow continuous scroll */
+.animate-marquee {
+  animation: marquee 60s linear infinite;
+}
+
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-beam,
+  .animate-marquee,
+  .animate-pulse,
+  .animate-fade-in-up {
+    animation: none !important;
+    opacity: 1 !important;
+  }
+}
+
+/* Scrollbars */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: hsl(var(--background-page));
+}
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--border));
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--accent));
+}
+
+button:hover,
+button:active {
+  will-change: transform;
+}
