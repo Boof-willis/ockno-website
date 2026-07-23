@@ -12,7 +12,7 @@ import { useEffect, useRef } from "react";
    before JS, and stay fully legible with no JS at all. */
 
 const TEXT =
-  "Hand it to an agency, and you pay a fat retainer every month — whether the phone rings or not. You get junk leads and vague reports. The risk stays yours. Or do it yourself, and drown in software — a dozen tools, a dozen integrations, weeks of setup before you land a single customer. You don't need another agency. You don't need another tool. You need the work done.";
+  "The ad platform sees the click. The form sees the lead. The CRM sees the deal. Stripe sees the money. None of them talk to each other, so nobody can tell you which ads actually produced paying customers. Your budget keeps buying the cheapest click instead of your best customer. The loop was never closed.";
 
 const WORDS = TEXT.split(" ");
 

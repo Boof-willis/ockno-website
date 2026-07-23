@@ -240,16 +240,24 @@ export default function Build() {
     // The visual panels themselves — the scrub driver on stacked layouts.
     let trainVisual: HTMLElement | null = null;
     let watchVisual: HTMLElement | null = null;
+    // The section rect gates the whole pass: this handler is wired to window
+    // scroll, so without it every card/visual rect below gets measured on every
+    // frame of the ENTIRE page. (The old `--ring-rot` root write that lived
+    // here is gone — nothing consumed it anymore, and a per-frame custom
+    // property on <html> invalidates style page-wide.)
+    const section = document.getElementById("build");
     const update = () => {
       ticking = false;
+      const vhGate = window.innerHeight;
+      if (section) {
+        const sr = section.getBoundingClientRect();
+        // 20% margin so states settle just off-screen rather than mid-glance.
+        if (sr.bottom < -vhGate * 0.2 || sr.top > vhGate * 1.2) return;
+      }
       // Below lg the cards stack text-above-visual into a tall column, so a
       // card's top rect is a bad proxy for whether its VISUAL is on screen —
       // the two scrubs below switch to the visual's own rect there.
       const desktop = window.matchMedia("(min-width: 1024px)").matches;
-      document.documentElement.style.setProperty(
-        "--ring-rot",
-        `${(window.scrollY * 0.18).toFixed(1)}deg`,
-      );
 
       // Card 3 — the "cost per customer" line draws left→right (downward) as the
       // card rises to its pin. dashoffset length→0 reveals the falling line; the
@@ -322,15 +330,16 @@ export default function Build() {
           // Stacked (mobile): same trap as the CPA line — the Brain panel sits
           // at the bottom of a tall card, so card-top math finishes the build
           // before the panel is on screen. Scrub off the visual's own rect:
-          // first frame as it crosses the viewport bottom, final frame once its
-          // top reaches ~35% of the screen — the whole build plays in view.
+          // first frame once its top clears ~88% of the viewport, final frame
+          // when it reaches ~18% — a 0.7vh runway, so the build unfolds slowly
+          // across the middle of the screen instead of racing to done.
           const vr = (
             trainVisual ??
             (trainVisual =
               el.querySelector<HTMLElement>('[data-visual="train"]')) ??
             el
           ).getBoundingClientRect();
-          const prog = Math.min(1, Math.max(0, (vh * 0.95 - vr.top) / (vh * 0.6)));
+          const prog = Math.min(1, Math.max(0, (vh * 0.88 - vr.top) / (vh * 0.7)));
           idx = Math.round(prog * LAST);
         }
         if (idx !== lastFrame) {

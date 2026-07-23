@@ -37,6 +37,11 @@ type Layer = {
   key: string;
   src: string;
   factor: number;
+  /** Overrides `factor` on small screens, for MotionInit's WebKit JS fallback
+   *  only (the CSS scroll-timeline path ignores it). 0 freezes the layer —
+   *  each JS transform write repaints the layer on the main thread, so phones
+   *  drop the least-visible movers. */
+  mobileFactor?: number;
   /** Lift the layer's resting (scroll-0) position off the bottom edge, so its
    *  ridge clears the layers in front. Any CSS length; defaults to 0. */
   raise?: string;
@@ -179,7 +184,10 @@ function ShootingStars() {
 
 const BACK: Layer[] = [
   { key: "far", src: "/scape/v2/far.webp", factor: 0.5, raise: "16vh" },
-  { key: "mid", src: "/scape/v2/mid.webp", factor: 0.187, dim: true },
+  // mid freezes on phones (mobileFactor 0): its 0.187 drift is the subtlest of
+  // the three movers, and dropping it removes a full-width image repaint per
+  // frame on the WebKit JS path.
+  { key: "mid", src: "/scape/v2/mid.webp", factor: 0.187, mobileFactor: 0, dim: true },
 ];
 
 const FRONT: Layer[] = [
@@ -189,10 +197,11 @@ const FRONT: Layer[] = [
 function Ridges({ layers }: { layers: Layer[] }) {
   return (
     <>
-      {layers.map(({ key, src, factor, raise, dim }, i) => (
+      {layers.map(({ key, src, factor, mobileFactor, raise, dim }, i) => (
         <div
           key={key}
           data-parallax-scroll={factor}
+          data-parallax-scroll-mobile={mobileFactor}
           className="ridge-layer ridge-drop absolute left-0 w-full"
           // Explicit z per layer (later in the array = nearer = higher) so the
           // stacking order can't be reordered by the compositor.

@@ -54,7 +54,11 @@ export default function Hero() {
         </Reveal>
 
         <Reveal delay={T.headline}>
-          <h1 className="text-[clamp(21px,6.4vw,55px)] md:text-[55px] font-semibold tracking-[-0.03em] text-foreground mb-6 leading-[1.06]">
+          {/* Looser leading on phones: at ~24px the static line and the rotating
+              line sit almost touching at 1.06, and the rotating word's own
+              descender padding tightens the gap further. Desktop keeps 1.06 —
+              at 55px that spacing reads as intended. */}
+          <h1 className="text-[clamp(21px,6.4vw,55px)] md:text-[55px] font-semibold tracking-[-0.03em] text-foreground mb-6 leading-[1.28] md:leading-[1.06]">
             The marketing operator that<br />
             <RotatingWord
               words={ROTATING}
@@ -64,15 +68,11 @@ export default function Hero() {
         </Reveal>
 
         <Reveal delay={T.subhead}>
-          <p className="text-base md:text-lg text-balance max-w-[520px] mx-auto mb-3.5 text-muted-foreground">
+          {/* mb-8 (not mb-3.5) carries the spacing the removed audience line
+              used to provide below this block. */}
+          <p className="text-base md:text-lg text-balance max-w-[520px] mx-auto mb-8 text-muted-foreground">
             It learns your business and runs your marketing for you — so you
             don&apos;t have to.
-          </p>
-          {/* Audience signal — answers "is this for me?" above the fold, so a
-              local business owner self-identifies immediately. Agencies are a
-              welcome secondary segment, handled lower down in #team, not here. */}
-          <p className="text-sm max-w-[520px] mx-auto mb-8 text-muted-foreground/70">
-            Built for local business owners running their own ads.
           </p>
         </Reveal>
 
@@ -81,9 +81,14 @@ export default function Hero() {
             <EarlyAccessButton className="btn-lift btn-pill btn-pill-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-page">
               Get early access
             </EarlyAccessButton>
+            {/* Secondary CTA. On phones it's a bare text button — two stacked
+                pills read as two competing primaries — and from sm up it picks
+                the ghost pill back up. Spelled out in utilities rather than
+                .btn-pill/.btn-pill-ghost because those are plain CSS classes
+                and can't take Tailwind's responsive variants. */}
             <a
               href="#build"
-              className="btn-lift btn-pill btn-pill-ghost focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              className="btn-lift inline-flex items-center justify-center gap-1.5 whitespace-nowrap text-sm font-normal py-2 text-muted-foreground transition-colors hover:text-foreground sm:h-12 sm:py-0 sm:px-9 sm:rounded-full sm:bg-foreground/10 sm:text-foreground sm:hover:bg-foreground/[0.16] focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             >
               See how it works
             </a>

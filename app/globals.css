@@ -741,6 +741,78 @@ html.lenis body {
   pointer-events: none;
 }
 
+/* Closing "dawn" sky (components/DawnScape.tsx). Lives here rather than inline
+   so the sunrise band can be re-keyed per breakpoint: the sun disc is 128vw, so
+   on a narrow screen it sits far lower (top 88% vs 74%) to read as cresting
+   rather than midday. The gradient's bright band has to follow it down, or the
+   sky stays lit where there's no longer a sun — two bright zones at once. */
+.dawn-sky {
+  background: linear-gradient(
+    to bottom,
+    #080706 0%,
+    #0b0908 30%,
+    #16110e 42%,
+    #301c12 49%,
+    #6a3617 54%,
+    #a85422 58%,
+    #dd7a2c 61%,
+    #fb9d38 64%,
+    #ffbb52 67%,
+    #ffd677 70%,
+    #ffe9ac 73%,
+    #eaa356 78%,
+    #7c4a28 88%,
+    #2c1a10 100%
+  );
+}
+/* Tablet (below lg). Same ramp, brightest stop at ~81%. Breakpoints match the
+   sun's md:/lg: tiers in DawnScape — the ordering matters: the phone rule below
+   also matches at tablet widths and must come last to win there. */
+@media (max-width: 1023px) {
+  .dawn-sky {
+    background: linear-gradient(
+      to bottom,
+      #080706 0%,
+      #0b0908 35%,
+      #16110e 48%,
+      #301c12 56%,
+      #6a3617 62%,
+      #a85422 67%,
+      #dd7a2c 71%,
+      #fb9d38 74%,
+      #ffbb52 77%,
+      #ffd677 79%,
+      #ffe9ac 81%,
+      #eaa356 86%,
+      #7c4a28 93%,
+      #2c1a10 100%
+    );
+  }
+}
+/* Phones (below md). Pushed furthest down — brightest lands near the ridgeline
+   at ~85%, so it's mostly night overhead with the glow at the horizon. */
+@media (max-width: 767px) {
+  .dawn-sky {
+    background: linear-gradient(
+      to bottom,
+      #080706 0%,
+      #0b0908 38%,
+      #16110e 52%,
+      #301c12 60%,
+      #6a3617 66%,
+      #a85422 71%,
+      #dd7a2c 75%,
+      #fb9d38 78%,
+      #ffbb52 81%,
+      #ffd677 83%,
+      #ffe9ac 85%,
+      #eaa356 90%,
+      #7c4a28 96%,
+      #2c1a10 100%
+    );
+  }
+}
+
 /* Slim, subtle horizontal scrollbar for the overflow-scroll comparison table —
    the default OS bar is thick and heavy under it. */
 .scroll-x-thin {

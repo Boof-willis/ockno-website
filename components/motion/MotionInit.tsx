@@ -34,6 +34,12 @@ export default function MotionInit() {
     const reduced = window.matchMedia(
       "(prefers-reduced-motion: reduce)",
     ).matches;
+    // Cost dial, NOT an off-switch: phones still run every effect (that parity
+    // was hard-won — see the iOS notes below), but the WebKit JS fallbacks are
+    // main-thread repaints, so on small screens we trim per-frame work: static
+    // ridge dim, frozen mid ridge (data-parallax-scroll-mobile), frozen dawn
+    // sun. Never used to skip an effect wholesale.
+    const smallView = window.matchMedia("(max-width: 768px)").matches;
 
     const revealEls = Array.from(
       document.querySelectorAll<HTMLElement>("[data-reveal]"),
@@ -188,26 +194,55 @@ export default function MotionInit() {
       // rendered position, which reads as jitter on layers that must hold an
       // exact ratio to the page. The loop reads scrollY every frame and only
       // writes when it changed, so the idle cost is one comparison per frame.
+      // data-parallax-scroll-mobile overrides the factor on small screens —
+      // a 0 drops that layer's per-frame repaint entirely (each unpromoted
+      // transform write repaints the layer's visible area on this path).
       const layers = parallaxScrollEls
-        .map((el) => ({
-          el,
-          factor: parseFloat(el.dataset.parallaxScroll || "0"),
-        }))
+        .map((el) => {
+          const mob = el.dataset.parallaxScrollMobile;
+          return {
+            el,
+            factor: parseFloat(
+              (smallView && mob != null ? mob : el.dataset.parallaxScroll) ||
+                "0",
+            ),
+            // Scroll offset past which this layer's section is fully above the
+            // viewport — beyond it we stop writing (the layer is clipped away,
+            // but the writes would still invalidate style/compositing every
+            // frame for the rest of the page).
+            max: Infinity,
+            lastS: -1,
+          };
+        })
         .filter((l) => l.factor !== 0);
-      let last = -1;
+      const measure = () => {
+        for (const l of layers) {
+          const sec = l.el.closest("section");
+          l.max = sec
+            ? sec.getBoundingClientRect().bottom + window.scrollY
+            : Infinity;
+          l.lastS = -1;
+        }
+      };
+      measure();
       let rafId = 0;
       const loop = () => {
         const s = window.scrollY;
-        if (s !== last) {
-          last = s;
-          for (const l of layers) {
-            l.el.style.transform = `translateY(${(s * l.factor).toFixed(1)}px)`;
+        for (const l of layers) {
+          const sEff = Math.min(s, l.max);
+          if (sEff !== l.lastS) {
+            l.lastS = sEff;
+            l.el.style.transform = `translateY(${(sEff * l.factor).toFixed(1)}px)`;
           }
         }
         rafId = requestAnimationFrame(loop);
       };
       loop();
-      removeScrollParallax = () => cancelAnimationFrame(rafId);
+      window.addEventListener("resize", measure);
+      removeScrollParallax = () => {
+        cancelAnimationFrame(rafId);
+        window.removeEventListener("resize", measure);
+      };
     }
 
     // --- Ridge dim (WebKit fallback) ------------------------------------------
@@ -220,7 +255,16 @@ export default function MotionInit() {
     const dimEls = Array.from(
       document.querySelectorAll<HTMLElement>("[data-dim]"),
     );
-    if (!useScrollAnim && dimEls.length) {
+    if (!useScrollAnim && dimEls.length && smallView) {
+      // Small screens: a scroll-driven `filter` re-rasterizes both big ridge
+      // images every frame on the main thread — the single most expensive
+      // per-frame write in the hero. Land on a fixed mid-ramp brightness once
+      // instead; the bottom fade-to-black already sells the darkening there.
+      for (const el of dimEls) el.style.filter = "brightness(0.75)";
+      removeDim = () => {
+        for (const el of dimEls) el.style.filter = "";
+      };
+    } else if (!useScrollAnim && dimEls.length) {
       let last = -1;
       let rafId = 0;
       const loop = () => {

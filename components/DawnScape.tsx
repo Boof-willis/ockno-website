@@ -18,27 +18,10 @@ import { CSSProperties, useEffect, useRef } from "react";
  * (/scape/v2/*) and the `.star` twinkle; the sky is a gradient.
  */
 
-/* Night at the top (behind the FAQ) → deep warm twilight → a bright sunrise band
-   at the ridgeline (~60%), then darkening into the ground the near ridge sits on.
-   % stops are keyed to the full FAQ+CTA+footer height. */
-/* Warm orange sunrise — same family as the original, dialed brighter: warm-black
-   night up top → burnt orange → vivid amber → a bright gold band at the sun. */
-const DAWN_SKY =
-  "linear-gradient(to bottom," +
-  " #080706 0%," +
-  " #0b0908 30%," +
-  " #16110e 42%," +
-  " #301c12 49%," +
-  " #6a3617 54%," +
-  " #a85422 58%," +
-  " #dd7a2c 61%," +
-  " #fb9d38 64%," +
-  " #ffbb52 67%," +
-  " #ffd677 70%," +
-  " #ffe9ac 73%," +
-  " #eaa356 78%," +
-  " #7c4a28 88%," +
-  " #2c1a10 100%)";
+/* The sky gradient (night overhead → warm twilight → a bright sunrise band at
+   the ridgeline → darkening into the ground) lives in globals.css as .dawn-sky,
+   where a max-width:768px query pushes its bright band down to follow the
+   lowered mobile sun. Stops are keyed to the full FAQ+CTA+footer height. */
 
 /* Deterministic star field over the night band (top ~44% — behind the FAQ), so
    SSR and client render byte-identical. A dense, bright field so the FAQ clearly
@@ -79,11 +62,27 @@ const STARS: Array<{ x: number; y: number; s: number; o: number; du: number; de:
 /* Later in the array = nearer = darker silhouette and higher z. `drift` is the
    px of scroll-driven parallax: POSITIVE lags (distant range sinks slower than
    the page), NEGATIVE leads (near foreground climbs faster). The spread between
-   them is what reads as depth — large on purpose so the scroll feels parallaxy. */
-const RIDGES = [
+   them is what reads as depth — large on purpose so the scroll feels parallaxy.
+
+   `pivot` is the progress value at which a layer's drift resolves to 0 (its
+   art sits exactly where `raise` puts it). 0.5 centres the motion, which is
+   right for the ranges behind. The NEAR ridge is different: it's the ground
+   plane that has to meet the bottom of the page, and it's read at p=1 (the
+   zone's bottom aligns with the viewport bottom only when you're scrolled to
+   the very end). A 0.5 pivot left it hanging half its drift — 55px — above the
+   footer's bottom edge in that settled state, so it anchors at 1 instead. */
+const RIDGES: {
+  key: string;
+  src: string;
+  raise: string;
+  brightness: number;
+  drift: number;
+  /** Progress at which this layer's drift resolves to 0. Defaults to 0.5. */
+  pivot?: number;
+}[] = [
   { key: "far", src: "/scape/v2/far.webp", raise: "11vh", brightness: 0.95, drift: 150 },
   { key: "mid", src: "/scape/v2/mid.webp", raise: "3vh", brightness: 0.68, drift: 55 },
-  { key: "near", src: "/scape/v2/near.webp", raise: "-3vh", brightness: 0.4, drift: -110 },
+  { key: "near", src: "/scape/v2/near.webp", raise: "-3vh", brightness: 0.4, drift: -110, pivot: 1 },
 ];
 
 export default function DawnScape() {
@@ -94,16 +93,26 @@ export default function DawnScape() {
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
+    // Perf dial for phones: every write below repaints an unpromoted layer on
+    // the main thread (no will-change here — see the render comments). The sun
+    // is a ~1000px gradient circle, by far the biggest repaint surface for the
+    // subtlest payoff, and the mid ridge is the least visible of the three —
+    // both hold still on small screens. The far/near ridge counter-drift (the
+    // actual depth read) is kept everywhere.
+    const smallView = window.matchMedia("(max-width: 768px)").matches;
     const update = () => {
       const zone = zoneRef.current;
       if (!zone) return;
       const rect = zone.getBoundingClientRect();
       const vh = window.innerHeight || 1;
+      // Off-screen: no writes. Without this the clamped p keeps re-writing the
+      // same styles for every scroll frame on the rest of the page.
+      if (rect.bottom < 0 || rect.top > vh) return;
       // 0 as the zone's top reaches the viewport bottom, 1 once it has scrolled a
       // full zone-height past — i.e. as the footer comes into view.
       const p = Math.max(0, Math.min(1, (vh - rect.top) / (rect.height || 1)));
 
-      if (sunRef.current) {
+      if (sunRef.current && !smallView) {
         // Starts low on the horizon and only begins to rise — a gentle climb, not
         // a full ascent. Visible scroll range (p≈0.5→1) lifts it ~60px.
         const rise = (0.5 - p) * 120;
@@ -112,7 +121,9 @@ export default function DawnScape() {
       }
       for (let i = 0; i < RIDGES.length; i++) {
         const el = ridgeRefs.current[i];
-        if (el) el.style.transform = `translateY(${((p - 0.5) * RIDGES[i].drift).toFixed(1)}px)`;
+        if (!el || (smallView && i === 1)) continue; // mid ridge: static on phones
+        const pivot = RIDGES[i].pivot ?? 0.5;
+        el.style.transform = `translateY(${((p - pivot) * RIDGES[i].drift).toFixed(1)}px)`;
       }
     };
 
@@ -149,8 +160,9 @@ export default function DawnScape() {
       aria-hidden
       className="absolute inset-0 overflow-hidden z-0 pointer-events-none"
     >
-      {/* Sky */}
-      <div className="absolute inset-0" style={{ background: DAWN_SKY }} />
+      {/* Sky — gradient lives in globals.css (.dawn-sky) so its sunrise band can
+          be re-keyed on mobile to follow the lowered sun. */}
+      <div className="dawn-sky absolute inset-0" />
 
       {/* Seam: a short blend from the card-dark section above into the black night
           sky, so the FAQ flows in with no line — and the rest of the FAQ stays
@@ -195,7 +207,15 @@ export default function DawnScape() {
           doesn't show up" failure. */}
       <div
         ref={sunRef}
-        className="absolute left-1/2 top-[74%] rounded-full"
+        // Three tiers, because the disc is min(128vw, 1040px): the narrower the
+        // screen, the more of it that 1040px glow covers, so at the desktop
+        // height it reads as midday haze over the CTA rather than a sunrise.
+        // Phones 88%, tablets 84%, desktop 74% — each dropping the centre far
+        // enough below the ridgeline that only the top of the glow crests it.
+        // Breakpoints mirror the .dawn-sky ramps in globals.css, which move the
+        // sky's bright band down in step (otherwise the sky stays lit where
+        // there's no longer a sun).
+        className="absolute left-1/2 top-[88%] md:top-[84%] lg:top-[74%] rounded-full"
         style={{
           transform: "translate(-50%, -50%)",
           width: "min(128vw, 1040px)",
