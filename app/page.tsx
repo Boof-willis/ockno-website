@@ -3,7 +3,6 @@ import Footer from "@/components/Footer";
 import HeroBackdrop from "@/components/HeroBackdrop";
 import DawnScape from "@/components/DawnScape";
 import MotionInit from "@/components/motion/MotionInit";
-import SafariProbe from "@/components/SafariProbe";
 import Hero from "@/components/sections/Hero";
 import OldWay from "@/components/sections/OldWay";
 import Features from "@/components/sections/Features";
@@ -26,7 +25,6 @@ export default function Home() {
 
       <main className="relative z-10">
         <MotionInit />
-        <SafariProbe />
         <Hero />
         <OldWay />
         <Features />
