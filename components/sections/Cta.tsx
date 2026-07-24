@@ -27,7 +27,7 @@ export default function Cta() {
         </div>
         <h2
           data-reveal={60}
-          className="text-4xl md:text-6xl font-semibold tracking-tight text-balance text-foreground mb-6"
+          className="text-[clamp(21px,6.4vw,55px)] md:text-[55px] font-semibold tracking-tight text-balance text-foreground mb-6"
         >
           Stop buying clicks. <br className="hidden sm:block" />
           Start buying customers.
