@@ -143,7 +143,7 @@ export default function Platform() {
           >
             <div className="flex items-start justify-between mb-6">
               <div className="icon-tile w-11 h-11">
-                <Icon icon="solar:megaphone-linear" width={22} />
+                <Icon icon="solar:volume-loud-linear" width={22} />
               </div>
               <div className="flex gap-2">
                 <span className="px-2.5 py-1 rounded-md bg-nested border border-border text-[11px] text-muted-foreground">

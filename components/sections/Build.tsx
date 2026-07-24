@@ -44,14 +44,14 @@ const STEPS = [
 
 const BUILDS = [
   { icon: "solar:clipboard-list-linear", label: "Forms" },
-  { icon: "solar:globe-linear", label: "Landing pages" },
+  { icon: "solar:global-linear", label: "Landing pages" },
   { icon: "solar:diagram-up-linear", label: "Pipelines" },
   { icon: "solar:calendar-linear", label: "Calendars" },
   { icon: "solar:palette-linear", label: "Brand & style guide" },
   { icon: "solar:bolt-linear", label: "Skills" },
-  { icon: "solar:megaphone-linear", label: "Ad campaigns" },
+  { icon: "solar:volume-loud-linear", label: "Ad campaigns" },
   { icon: "solar:magic-stick-3-linear", label: "Ad creatives" },
-  { icon: "solar:workflow-linear", label: "Automations" },
+  { icon: "solar:routing-2-linear", label: "Automations" },
   { icon: "solar:chat-square-linear", label: "Email & SMS follow-up" },
   { icon: "solar:document-text-linear", label: "Documents" },
   { icon: "solar:file-check-linear", label: "Estimates & contracts" },

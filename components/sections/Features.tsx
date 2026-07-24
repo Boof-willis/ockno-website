@@ -25,7 +25,7 @@ const TABS: {
   {
     key: "ads",
     label: "Ads",
-    icon: "solar:megaphone-linear",
+    icon: "solar:volume-loud-linear",
     title: "Ad campaigns",
     image: "/images/ads-manager.png",
     caption:
@@ -43,7 +43,7 @@ const TABS: {
   {
     key: "followup",
     label: "Follow-up",
-    icon: "solar:workflow-linear",
+    icon: "solar:routing-2-linear",
     title: "Automations",
     image: "/images/automations.png",
     caption:

@@ -78,10 +78,10 @@ export default function Compare() {
                   </span>
                 </div>
                 <div className="w-[36%] shrink-0 bg-primary/10 px-3.5 py-2.5 md:px-5 md:py-4 text-center">
-                  <span className="text-xs md:text-sm font-semibold text-primary inline-flex items-center justify-center gap-2">
+                  <span className="inline-flex items-center justify-center">
+                    {/* Wordmark — the logo already reads "Ockno", so no text label. */}
                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src="/images/ockno-logo.svg" alt="" className="h-4 w-auto" />
-                    Ockno
+                    <img src="/images/ockno-logo.svg" alt="Ockno" className="h-4 md:h-[18px] w-auto" />
                   </span>
                 </div>
               </div>
