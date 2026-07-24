@@ -30,7 +30,7 @@ export default function Cta() {
           className="text-4xl md:text-6xl font-semibold tracking-tight text-balance text-foreground mb-6"
         >
           Stop buying clicks. <br className="hidden sm:block" />
-          <span className="text-muted-foreground">Start buying customers.</span>
+          Start buying customers.
         </h2>
 
         <p data-reveal={120} className="text-lg text-muted-foreground mb-8 max-w-xl mx-auto">
@@ -44,9 +44,6 @@ export default function Cta() {
             Get early access
           </EarlyAccessButton>
         </div>
-        <p data-reveal={320} className="text-xs text-muted-foreground">
-          Now in early access · No retainers, ever
-        </p>
       </div>
     </section>
   );
