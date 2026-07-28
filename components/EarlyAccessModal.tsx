@@ -22,7 +22,7 @@ import Icon from "./ui/Icon";
 
 const GHL_WEBHOOK_URL =
   process.env.NEXT_PUBLIC_GHL_WEBHOOK_URL ??
-  "https://services.leadconnectorhq.com/hooks/REPLACE_WITH_YOUR_GHL_WEBHOOK";
+  "https://services.leadconnectorhq.com/hooks/x3vtMYcaW8nQodQr9rUN/webhook-trigger/be21d2c4-51c2-472c-a55b-bc1040bc1e4d";
 
 /** Kept in sync with the visible checkbox label (minus the links). Sent to GHL so
  *  there's a stored record of exactly what the lead agreed to. */
