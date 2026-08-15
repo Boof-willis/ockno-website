@@ -153,7 +153,7 @@ export default function PrivacyPolicy() {
         </P>
       </section>
 
-      <section>
+      <section id="youtube-api-services">
         <H2>YouTube API Services</H2>
         <P className="mb-4">
           Ockno uses YouTube API Services to let you upload video content from

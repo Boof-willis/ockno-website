@@ -33,10 +33,6 @@ export default function Footer() {
           >
             FAQ
           </a>
-          <span className="inline-flex items-center gap-1.5 text-muted-foreground">
-            <Icon icon="logos:youtube-icon" width={16} />
-            YouTube
-          </span>
           <a
             href="/privacy-policy"
             className="hover:text-foreground transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-sm"
@@ -48,6 +44,13 @@ export default function Footer() {
             className="hover:text-foreground transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-sm"
           >
             Terms
+          </a>
+          <a
+            href="/privacy-policy#youtube-api-services"
+            className="inline-flex items-center gap-1.5 hover:text-foreground transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-sm"
+          >
+            <Icon icon="logos:youtube-icon" width={16} />
+            YouTube Privacy
           </a>
         </div>
       </div>
