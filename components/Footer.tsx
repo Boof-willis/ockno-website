@@ -1,3 +1,5 @@
+import Icon from "./ui/Icon";
+
 export default function Footer() {
   return (
     <footer className="relative z-10 py-16">
@@ -31,6 +33,10 @@ export default function Footer() {
           >
             FAQ
           </a>
+          <span className="inline-flex items-center gap-1.5 text-muted-foreground">
+            <Icon icon="logos:youtube-icon" width={16} />
+            YouTube
+          </span>
           <a
             href="/privacy-policy"
             className="hover:text-foreground transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-sm"
