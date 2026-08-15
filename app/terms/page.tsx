@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import LegalShell, { H2, H3, P, UL, ContactBox } from "@/components/LegalShell";
+import LegalShell, { H2, H3, P, UL, A, ContactBox } from "@/components/LegalShell";
 
 export const metadata: Metadata = {
   title: "Terms of Service | Ockno",
@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 
 export default function Terms() {
   return (
-    <LegalShell title="Terms of Service" lastUpdated="January 23, 2026">
+    <LegalShell title="Terms of Service" lastUpdated="August 15, 2026">
       <section>
         <H2>1. Agreement to Terms</H2>
         <P>
@@ -53,6 +53,10 @@ export default function Terms() {
           </li>
           <li>
             Provides reporting and analytics on lead performance and attribution
+          </li>
+          <li>
+            Publishes your video creative to your connected YouTube channel for
+            use in video advertising campaigns
           </li>
         </UL>
         <P className="mt-4">
@@ -248,6 +252,46 @@ export default function Terms() {
           <li>
             You are responsible for maintaining valid credentials and
             authorizations for connected accounts
+          </li>
+        </UL>
+
+        <H3>YouTube API Services</H3>
+        <P className="mb-4">
+          The Services use YouTube API Services to upload video content to
+          YouTube channels that you own and have connected to your account. By
+          using these features, you acknowledge and agree that:
+        </P>
+        <UL>
+          <li>
+            You are agreeing to be bound by the{" "}
+            <A href="https://www.youtube.com/t/terms">
+              YouTube Terms of Service
+            </A>
+          </li>
+          <li>
+            Google&apos;s handling of your information is described in the{" "}
+            <A href="https://policies.google.com/privacy">
+              Google Privacy Policy
+            </A>
+          </li>
+          <li>
+            Uploads are made only to YouTube channels you have explicitly
+            authorized through Google&apos;s OAuth consent process, and only when
+            you initiate them
+          </li>
+          <li>
+            You are responsible for ensuring that video content you upload
+            complies with YouTube&apos;s Terms of Service and Community
+            Guidelines
+          </li>
+          <li>
+            You may revoke Ockno&apos;s access to your YouTube channel at any
+            time through your Google security settings (
+            <A href="https://myaccount.google.com/permissions">
+              https://myaccount.google.com/permissions
+            </A>
+            ); revoking access disables YouTube upload features but does not
+            affect videos already on your channel
           </li>
         </UL>
       </section>

@@ -87,6 +87,25 @@ export function UL({ children }: { children: React.ReactNode }) {
   );
 }
 
+export function A({
+  href,
+  children,
+}: {
+  href: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="text-primary hover:text-primary-hover transition-colors underline underline-offset-2"
+    >
+      {children}
+    </a>
+  );
+}
+
 export function ContactBox() {
   return (
     <div className="card-elevated p-6 space-y-2">

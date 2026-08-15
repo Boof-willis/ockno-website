@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import LegalShell, { H2, H3, P, UL, ContactBox } from "@/components/LegalShell";
+import LegalShell, { H2, H3, P, UL, A, ContactBox } from "@/components/LegalShell";
 
 export const metadata: Metadata = {
   title: "Privacy Policy | Ockno",
@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 export default function PrivacyPolicy() {
   return (
-    <LegalShell title="Privacy Policy" lastUpdated="January 23, 2026">
+    <LegalShell title="Privacy Policy" lastUpdated="August 15, 2026">
       <section>
         <H2>Introduction</H2>
         <P>
@@ -73,8 +73,11 @@ export default function PrivacyPolicy() {
         <UL>
           <li>
             <strong className="text-white">Integrated Platforms:</strong> Data
-            from CRMs, advertising platforms (Google Ads, Meta), and other
-            services you connect to Ockno.
+            from CRMs, advertising platforms (Google Ads, Meta), YouTube, and
+            other services you connect to Ockno. Our use of information received
+            from Google APIs — including YouTube API Services — is described in
+            the <strong className="text-white">YouTube API Services</strong>{" "}
+            section below.
           </li>
           <li>
             <strong className="text-white">Service Providers:</strong>{" "}
@@ -147,6 +150,54 @@ export default function PrivacyPolicy() {
         </UL>
         <P className="mt-4 font-semibold">
           We do not sell your personal information to third parties.
+        </P>
+      </section>
+
+      <section>
+        <H2>YouTube API Services</H2>
+        <P className="mb-4">
+          Ockno uses YouTube API Services to let you upload video content from
+          your Ockno media library to YouTube channels you own. When you connect
+          a YouTube channel:
+        </P>
+        <UL>
+          <li>
+            We access and store your Google OAuth tokens (encrypted at rest) so
+            we can perform uploads you request without asking you to sign in
+            each time
+          </li>
+          <li>
+            We access your channel&apos;s basic identifying information (channel
+            ID and name) to confirm which channel you have connected
+          </li>
+          <li>
+            We store the YouTube video IDs of videos uploaded through Ockno so
+            they can be referenced in your advertising campaigns
+          </li>
+          <li>
+            We do not access, collect, or store your YouTube viewing history,
+            subscriptions, comments, or any content from other users&apos;
+            channels
+          </li>
+          <li>
+            We do not share data obtained through YouTube API Services with
+            third parties, and we do not use it for advertising purposes of our
+            own
+          </li>
+        </UL>
+        <P className="mt-4">
+          Information obtained through YouTube API Services is handled in
+          accordance with the{" "}
+          <A href="https://policies.google.com/privacy">
+            Google Privacy Policy
+          </A>
+          . You can revoke Ockno&apos;s access to your YouTube data at any time
+          via your Google security settings (
+          <A href="https://myaccount.google.com/permissions">
+            https://myaccount.google.com/permissions
+          </A>
+          ). Upon revocation or disconnection of your channel, we delete the
+          stored OAuth tokens associated with it.
         </P>
       </section>
 
