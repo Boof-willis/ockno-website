@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 export default function PrivacyPolicy() {
   return (
-    <LegalShell title="Privacy Policy" lastUpdated="August 15, 2026">
+    <LegalShell title="Privacy Policy" lastUpdated="September 2, 2026">
       <section>
         <H2>Introduction</H2>
         <P>
@@ -73,11 +73,13 @@ export default function PrivacyPolicy() {
         <UL>
           <li>
             <strong className="text-white">Integrated Platforms:</strong> Data
-            from CRMs, advertising platforms (Google Ads, Meta), YouTube, and
-            other services you connect to Ockno. Our use of information received
-            from Google APIs — including YouTube API Services — is described in
-            the <strong className="text-white">YouTube API Services</strong>{" "}
-            section below.
+            from CRMs, advertising platforms (Google Ads, Meta), Google
+            Analytics, Google Search Console, Google Calendar, Google Drive,
+            YouTube, and other services you connect to Ockno. Our use of
+            information received from Google APIs is described in the{" "}
+            <strong className="text-white">Google API Services</strong> and{" "}
+            <strong className="text-white">YouTube API Services</strong>{" "}
+            sections below.
           </li>
           <li>
             <strong className="text-white">Service Providers:</strong>{" "}
@@ -153,6 +155,118 @@ export default function PrivacyPolicy() {
         </P>
       </section>
 
+      <section id="google-api-services">
+        <H2>Google API Services</H2>
+        <P className="mb-4">
+          Ockno connects to Google services only when you authorize a connection
+          through Google sign-in (OAuth). Each connection requests only the
+          permissions the feature you are enabling needs, and Google shows you
+          those permissions before you approve them. The following applies to
+          every Google connection:
+        </P>
+        <UL>
+          <li>
+            We store the OAuth tokens Google issues to us encrypted at rest and
+            use them only to perform the actions described below on the account
+            you connected
+          </li>
+          <li>
+            We use information received from Google APIs only to provide and
+            improve the feature you connected it for. We do not sell it, we do
+            not use it for our own advertising, and we do not use it to train
+            generalized artificial intelligence or machine learning models
+          </li>
+          <li>
+            We do not share information received from Google APIs with third
+            parties, except the infrastructure providers that host our platform
+            under confidentiality obligations, or where required by law
+          </li>
+          <li>
+            You can revoke Ockno&apos;s access at any time from your Google
+            security settings (
+            <A href="https://myaccount.google.com/permissions">
+              https://myaccount.google.com/permissions
+            </A>
+            ) or by disconnecting the service inside Ockno. When a connection is
+            disconnected or revoked, we delete the stored OAuth tokens for it
+          </li>
+        </UL>
+        <P className="mt-4">
+          Ockno&apos;s use and transfer to any other app of information received
+          from Google APIs will adhere to the{" "}
+          <A href="https://developers.google.com/terms/api-services-user-data-policy">
+            Google API Services User Data Policy
+          </A>
+          , including the Limited Use requirements.
+        </P>
+
+        <H3>Google Ads</H3>
+        <P className="mb-4">
+          When you connect a Google Ads account, Ockno requests permission to
+          see, edit, create, and delete Google Ads accounts and data. We use it
+          to:
+        </P>
+        <UL>
+          <li>
+            Read the accounts you have access to, together with their campaigns,
+            ad groups, ads, keywords, budgets, conversion actions, and
+            performance metrics such as impressions, clicks, cost, and
+            conversions
+          </li>
+          <li>
+            Create, edit, pause, and remove campaigns, ad groups, ads, and
+            conversion actions in your account when you, or the Ockno AI
+            operator acting on your instructions, ask it to
+          </li>
+          <li>
+            Store campaign identifiers and daily performance metrics so we can
+            reconcile ad spend with the leads and revenue recorded in your CRM
+            and show you attribution reporting
+          </li>
+          <li>
+            Send offline conversion events (click identifiers, event time,
+            conversion action, and value) back to your account so Google Ads can
+            optimize toward the outcomes you care about
+          </li>
+        </UL>
+        <P className="mt-4">
+          For offline conversion uploads Ockno may also request permission to
+          the Google Data Manager API. We use that permission solely to send
+          conversion events to the Google Ads account you connected and to check
+          the status of those uploads. We do not use it to read, import, or
+          delete customer data in Google Analytics or Google Marketing Platform
+          products.
+        </P>
+
+        <H3>Google Analytics and Google Search Console</H3>
+        <P>
+          When you connect Google Analytics or Google Search Console for SEO
+          reporting, Ockno requests read-only access. We read the Analytics
+          properties and Search Console sites you choose, along with their
+          traffic, acquisition, and search performance reports (queries, pages,
+          clicks, impressions, and average position), to show reporting and
+          recommendations inside Ockno. We never modify your Analytics or Search
+          Console configuration.
+        </P>
+
+        <H3>Google Calendar</H3>
+        <P>
+          When you connect Google Calendar for booking, Ockno reads your list of
+          calendars and your free/busy availability to offer open times, and
+          creates, updates, and cancels the booking events that are scheduled
+          through Ockno, including Google Meet links for those events. We do not
+          read the details of events that were not created through Ockno.
+        </P>
+
+        <H3>Google Drive</H3>
+        <P>
+          When you connect Google Drive, Ockno can only access files you
+          individually select through the Google file picker and import them
+          into your Ockno media library. We do not see, list, or access any
+          other files in your Drive.
+        </P>
+      </section>
+
       <section id="youtube-api-services">
         <H2>YouTube API Services</H2>
         <P className="mb-4">
@@ -213,6 +327,13 @@ export default function PrivacyPolicy() {
           Lead and attribution data synced through our platform is retained
           according to your subscription plan and settings. You may request
           deletion of your data at any time by contacting us.
+        </P>
+        <P className="mt-4">
+          When you disconnect a Google service or revoke Ockno&apos;s access, we
+          delete the stored OAuth tokens for that connection immediately. Data
+          previously synced from that service (for example cached campaign
+          performance metrics) is deleted within 30 days of the disconnection
+          unless we are required to keep it by law.
         </P>
       </section>
 

@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 
 export default function Terms() {
   return (
-    <LegalShell title="Terms of Service" lastUpdated="August 15, 2026">
+    <LegalShell title="Terms of Service" lastUpdated="September 2, 2026">
       <section>
         <H2>1. Agreement to Terms</H2>
         <P>
@@ -48,8 +48,18 @@ export default function Terms() {
             Lead, Qualified Lead, Converted Lead)
           </li>
           <li>
+            Creates, edits, pauses, and manages advertising campaigns, ad
+            creatives, and conversion actions in your connected Google Ads and
+            Meta accounts when you direct it to
+          </li>
+          <li>
             Sends offline conversion signals back to advertising platforms to
             optimize campaign performance
+          </li>
+          <li>
+            Reads Google Analytics and Google Search Console data for SEO
+            reporting, manages booking events on your connected Google Calendar,
+            and imports files you select from Google Drive
           </li>
           <li>
             Provides reporting and analytics on lead performance and attribution
