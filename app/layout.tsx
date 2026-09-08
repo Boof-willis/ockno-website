@@ -54,6 +54,18 @@ const jsFlagScript = `
 }catch(e){}})();
 `;
 
+// Google Analytics 4. Inlined rather than via next/script because the site is
+// a static export — the raw tag is what Google's snippet expects and it fires
+// before hydration.
+const GA_MEASUREMENT_ID = "G-YCF8HR62M4";
+
+const gaScript = `
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', '${GA_MEASUREMENT_ID}');
+`;
+
 export default function RootLayout({
   children,
 }: {
@@ -67,6 +79,12 @@ export default function RootLayout({
     >
       <head>
         <script dangerouslySetInnerHTML={{ __html: jsFlagScript }} />
+        {/* Google tag (gtag.js) */}
+        <script
+          async
+          src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
+        />
+        <script dangerouslySetInnerHTML={{ __html: gaScript }} />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(ORG_SCHEMA) }}
