@@ -178,8 +178,19 @@ export default function PrivacyPolicy() {
           </li>
           <li>
             We do not share information received from Google APIs with third
-            parties, except the infrastructure providers that host our platform
-            under confidentiality obligations, or where required by law
+            parties, except the providers that host and process data for our
+            platform under confidentiality obligations, or where required by law
+          </li>
+          <li>
+            Because Ockno is an AI-operated platform, information from these
+            connections is sent to our AI processors — currently Anthropic
+            (Claude) and Amazon Web Services — to produce the reports,
+            recommendations, and content you ask for. For example, analyzing the
+            performance of a connected Google Ads account, or reading a video you
+            imported from Drive so ad copy can reference what it shows. These
+            providers act on our instructions under agreements that prohibit them
+            from using your data to train their models, and we send only what a
+            given task requires
           </li>
           <li>
             You can revoke Ockno&apos;s access at any time from your Google
@@ -300,7 +311,11 @@ export default function PrivacyPolicy() {
           </li>
         </UL>
         <P className="mt-4">
-          Information obtained through YouTube API Services is handled in
+          By connecting a YouTube channel you are also agreeing to the{" "}
+          <A href="https://www.youtube.com/t/terms">
+            YouTube Terms of Service
+          </A>
+          . Information obtained through YouTube API Services is handled in
           accordance with the{" "}
           <A href="https://policies.google.com/privacy">
             Google Privacy Policy
