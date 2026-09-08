@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 export default function PrivacyPolicy() {
   return (
-    <LegalShell title="Privacy Policy" lastUpdated="September 2, 2026">
+    <LegalShell title="Privacy Policy" lastUpdated="September 8, 2026">
       <section>
         <H2>Introduction</H2>
         <P>
