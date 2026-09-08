@@ -65,7 +65,10 @@ export default function PrivacyPolicy() {
           <li>
             <strong className="text-white">Cookies and Tracking:</strong> We use
             cookies and similar technologies to maintain sessions, remember
-            preferences, and analyze platform usage.
+            preferences, and analyze platform usage. Our website uses Google
+            Analytics 4, which sets cookies to measure page views, traffic
+            sources, and how visitors move through the site. See{" "}
+            <strong className="text-white">Website Analytics</strong> below.
           </li>
         </UL>
 
@@ -371,6 +374,41 @@ export default function PrivacyPolicy() {
       </section>
 
       <section>
+        <H2>Website Analytics</H2>
+        <P>
+          We use Google Analytics 4 on ockno.com to understand how visitors find
+          and use our website. It collects information such as the pages you
+          view, the time spent on them, your approximate location derived from a
+          truncated IP address, your device and browser type, and the referring
+          site or campaign that brought you here. This is separate from the
+          Google Analytics data you may connect to Ockno as a customer, which is
+          covered in the{" "}
+          <strong className="text-white">Google API Services</strong> section
+          above.
+        </P>
+        <P className="mt-4">
+          We use this information only in aggregate, to measure traffic and
+          improve the site. We do not use it to build advertising profiles, and
+          we do not sell it. Google&apos;s handling of this data is governed by
+          its own{" "}
+          <A href="https://policies.google.com/privacy">Privacy Policy</A>, and
+          you can read how Google uses data from sites that use its services{" "}
+          <A href="https://policies.google.com/technologies/partner-sites">
+            here
+          </A>
+          .
+        </P>
+        <P className="mt-4">
+          You can opt out of Google Analytics on any site by installing the{" "}
+          <A href="https://tools.google.com/dlpage/gaoptout">
+            Google Analytics Opt-out Browser Add-on
+          </A>
+          , or by blocking analytics cookies in your browser settings. Blocking
+          them does not affect your ability to use our website.
+        </P>
+      </section>
+
+      <section>
         <H2>Your Rights and Choices</H2>
         <P className="mb-4">
           Depending on your location, you may have the following rights:
@@ -394,7 +432,9 @@ export default function PrivacyPolicy() {
           </li>
           <li>
             <strong className="text-white">Opt-Out:</strong> Unsubscribe from
-            marketing communications at any time.
+            marketing communications at any time, and opt out of website
+            analytics as described under{" "}
+            <strong className="text-white">Website Analytics</strong> above.
           </li>
           <li>
             <strong className="text-white">Restrict Processing:</strong> Request
