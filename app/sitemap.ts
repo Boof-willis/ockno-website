@@ -20,6 +20,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.2,
     },
     {
+      url: `${BASE}/sub-processors`,
+      lastModified: new Date(),
+      changeFrequency: "yearly",
+      priority: 0.2,
+    },
+    {
       url: `${BASE}/terms`,
       lastModified: new Date(),
       changeFrequency: "yearly",

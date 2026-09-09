@@ -46,6 +46,12 @@ export default function Footer() {
             Terms
           </a>
           <a
+            href="/sub-processors"
+            className="hover:text-foreground transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-sm"
+          >
+            Sub-processors
+          </a>
+          <a
             href="/privacy-policy#youtube-api-services"
             className="inline-flex items-center gap-1.5 hover:text-foreground transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-sm"
           >
