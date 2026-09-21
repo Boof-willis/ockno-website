@@ -13,21 +13,33 @@ import Icon from "./ui/Icon";
  * server route), so the browser posts the lead straight to the GHL hook. Set the
  * URL via NEXT_PUBLIC_GHL_WEBHOOK_URL (inlined at build) or paste it below.
  *
- * A2P 10DLC / TCPA: the SMS+email consent checkbox is UNCHECKED by default
- * (explicit opt-in). Its language names the sender (Ockno), states the message
- * types, that frequency varies, that msg & data rates may apply, the STOP/HELP
- * keywords, and that consent is not a condition of purchase. The exact consent
- * text shown plus a timestamp are sent to GHL as a record of consent.
+ * A2P 10DLC / TCPA: two separate SMS consent checkboxes (informational and
+ * marketing), both UNCHECKED by default and both OPTIONAL — the form submits
+ * without either, since consent is not a condition of purchase. Each names the
+ * sender (Ockno), states the message types, that frequency varies, that message
+ * and data rates may apply, and the HELP/STOP keywords. The exact text of each
+ * checked box plus a timestamp are sent to GHL as a record of consent.
  */
 
 const GHL_WEBHOOK_URL =
   process.env.NEXT_PUBLIC_GHL_WEBHOOK_URL ??
   "https://services.leadconnectorhq.com/hooks/x3vtMYcaW8nQodQr9rUN/webhook-trigger/be21d2c4-51c2-472c-a55b-bc1040bc1e4d";
 
-/** Kept in sync with the visible checkbox label (minus the links). Sent to GHL so
- *  there's a stored record of exactly what the lead agreed to. */
-const CONSENT_TEXT =
-  "I agree to receive marketing and account text messages (SMS) and emails from Ockno at the phone number and email I provided. Consent is not a condition of purchase. Message frequency varies. Message and data rates may apply. Reply STOP to opt out, HELP for help.";
+/** Rendered verbatim as the checkbox labels and sent to GHL, so there's a stored
+ *  record of exactly what the lead agreed to. */
+const CONSENT_TEXT = {
+  informational:
+    "I agree to receive text messages (SMS) from Ockno about customer support and account notifications. Message frequency varies. Message and data rates may apply. Reply HELP for help, STOP to opt out. Consent is not a condition of purchase.",
+  marketing:
+    "I agree to receive marketing text messages (SMS) from Ockno, such as special offers and promotions. Message frequency varies. Message and data rates may apply. Reply HELP for help, STOP to opt out. Consent is not a condition of purchase.",
+} as const;
+
+type ConsentKind = keyof typeof CONSENT_TEXT;
+const CONSENT_KINDS = Object.keys(CONSENT_TEXT) as ConsentKind[];
+const NO_CONSENT: Record<ConsentKind, boolean> = {
+  informational: false,
+  marketing: false,
+};
 
 export const EARLY_ACCESS_EVENT = "ockno:early-access";
 
@@ -40,7 +52,7 @@ const labelCls = "block text-[13px] font-medium text-foreground mb-1.5";
 export default function EarlyAccessModal() {
   const [open, setOpen] = useState(false);
   const [status, setStatus] = useState<Status>("idle");
-  const [consent, setConsent] = useState(false);
+  const [consent, setConsent] = useState(NO_CONSENT);
   const [firstName, setFirstName] = useState("");
   const panelRef = useRef<HTMLDivElement>(null);
   const firstFieldRef = useRef<HTMLInputElement>(null);
@@ -50,7 +62,7 @@ export default function EarlyAccessModal() {
   useEffect(() => {
     const onOpen = () => {
       setStatus("idle");
-      setConsent(false);
+      setConsent(NO_CONSENT);
       setOpen(true);
     };
     window.addEventListener(EARLY_ACCESS_EVENT, onOpen);
@@ -114,7 +126,7 @@ export default function EarlyAccessModal() {
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    if (!consent || status === "submitting") return;
+    if (status === "submitting") return;
     setStatus("submitting");
 
     const fd = new FormData(e.currentTarget);
@@ -127,9 +139,12 @@ export default function EarlyAccessModal() {
       email: String(fd.get("email") || "").trim(),
       phone: String(fd.get("phone") || "").trim(),
       business: String(fd.get("business") || "").trim(),
-      sms_consent: true,
-      email_consent: true,
-      consent_text: CONSENT_TEXT,
+      sms_consent: consent.informational || consent.marketing,
+      sms_consent_informational: consent.informational,
+      sms_consent_marketing: consent.marketing,
+      consent_text: CONSENT_KINDS.filter((k) => consent[k])
+        .map((k) => CONSENT_TEXT[k])
+        .join(" | "),
       consent_timestamp: new Date().toISOString(),
       source: "ockno.com — early access form",
       page_url: typeof window !== "undefined" ? window.location.href : "",
@@ -242,13 +257,15 @@ export default function EarlyAccessModal() {
 
               <div>
                 <label htmlFor="ea-phone" className={labelCls}>
-                  Mobile phone
+                  Mobile phone{" "}
+                  <span className="text-muted-foreground/60 font-normal">
+                    (optional)
+                  </span>
                 </label>
                 <input
                   id="ea-phone"
                   name="phone"
                   type="tel"
-                  required
                   autoComplete="tel"
                   inputMode="tel"
                   placeholder="(555) 123-4567"
@@ -273,22 +290,39 @@ export default function EarlyAccessModal() {
                 />
               </div>
 
-              {/* A2P / TCPA explicit opt-in — unchecked by default. */}
-              <label className="flex gap-2.5 pt-1 cursor-pointer">
-                <input
-                  type="checkbox"
-                  required
-                  checked={consent}
-                  onChange={(e) => setConsent(e.target.checked)}
-                  className="mt-0.5 h-4 w-4 shrink-0"
-                  style={{ accentColor: "hsl(var(--primary))" }}
-                />
-                <span className="text-xs leading-relaxed text-muted-foreground">
-                  I agree to receive marketing and account text messages (SMS) and
-                  emails from Ockno at the phone number and email I provided.
-                  Consent is not a condition of purchase. Message frequency varies.
-                  Message &amp; data rates may apply. Reply STOP to opt out, HELP
-                  for help. See our{" "}
+              {/* Carrier compliance consent block — A2P / TCPA. Separate, optional
+                  opt-ins, unchecked by default. */}
+              <div className="space-y-3 pt-1">
+                {CONSENT_KINDS.map((kind) => (
+                  <label key={kind} className="flex items-start gap-2.5 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      name={`sms_consent_${kind}`}
+                      data-ockno-consent={kind}
+                      data-ockno-consent-text={CONSENT_TEXT[kind]}
+                      checked={consent[kind]}
+                      onChange={(e) =>
+                        setConsent((c) => ({ ...c, [kind]: e.target.checked }))
+                      }
+                      className="mt-0.5 h-4 w-4 shrink-0"
+                      style={{ accentColor: "hsl(var(--primary))" }}
+                    />
+                    <span className="text-xs leading-relaxed text-muted-foreground">
+                      {CONSENT_TEXT[kind]}
+                    </span>
+                  </label>
+                ))}
+                <p className="text-xs leading-relaxed text-muted-foreground">
+                  See our{" "}
+                  <a
+                    href="/terms"
+                    className="underline hover:text-foreground"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Terms and Conditions
+                  </a>{" "}
+                  and{" "}
                   <a
                     href="/privacy-policy"
                     className="underline hover:text-foreground"
@@ -296,19 +330,10 @@ export default function EarlyAccessModal() {
                     rel="noopener noreferrer"
                   >
                     Privacy Policy
-                  </a>{" "}
-                  and{" "}
-                  <a
-                    href="/terms"
-                    className="underline hover:text-foreground"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Terms
                   </a>
                   .
-                </span>
-              </label>
+                </p>
+              </div>
 
               {status === "error" && (
                 <p className="text-xs text-red-400" role="alert">
@@ -322,7 +347,7 @@ export default function EarlyAccessModal() {
 
               <button
                 type="submit"
-                disabled={!consent || status === "submitting"}
+                disabled={status === "submitting"}
                 className="btn-pill btn-pill-accent w-full disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-card"
               >
                 {status === "submitting" ? "Sending…" : "Request early access"}
