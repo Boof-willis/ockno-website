@@ -156,6 +156,12 @@ export default function PrivacyPolicy() {
         <P className="mt-4 font-semibold">
           We do not sell your personal information to third parties.
         </P>
+        <P className="mt-4 font-semibold">
+          We do not sell or share your SMS opt-in data or personal information
+          with third parties for marketing purposes. Mobile information and text
+          messaging consent are not shared with third parties or affiliates for
+          marketing or promotional purposes.
+        </P>
       </section>
 
       <section id="google-api-services">
