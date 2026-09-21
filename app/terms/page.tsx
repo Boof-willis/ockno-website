@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 
 export default function Terms() {
   return (
-    <LegalShell title="Terms of Service" lastUpdated="September 2, 2026">
+    <LegalShell title="Terms of Service" lastUpdated="September 21, 2026">
       <section>
         <H2>1. Agreement to Terms</H2>
         <P>
@@ -58,8 +58,17 @@ export default function Terms() {
           </li>
           <li>
             Reads Google Analytics and Google Search Console data for SEO
-            reporting, manages booking events on your connected Google Calendar,
-            and imports files you select from Google Drive
+            reporting, manages booking events (including Google Meet links) on
+            your connected Google Calendar, and imports files you select from
+            Google Drive
+          </li>
+          <li>
+            Reads and writes rows in the Google Sheets spreadsheets you select
+            or that Ockno creates for you, to import contacts and run the
+            automations you configure
+          </li>
+          <li>
+            Lets you sign in to Ockno with your Google account
           </li>
           <li>
             Provides reporting and analytics on lead performance and attribution
@@ -264,6 +273,26 @@ export default function Terms() {
             authorizations for connected accounts
           </li>
         </UL>
+
+        <H3>Google Services</H3>
+        <P className="mb-4">
+          The Services connect to Google products (Sign in with Google, Google
+          Ads, Google Analytics, Google Search Console, Google Calendar and
+          Google Meet, Google Drive, Google Sheets, and YouTube) only after you
+          authorize each connection through Google&apos;s OAuth consent process.
+          Each connection requests only the permissions that feature needs. How
+          we access, use, store, and share information received from Google APIs
+          is described in the{" "}
+          <A href="/privacy-policy#google-api-services">
+            Google API Services section of our Privacy Policy
+          </A>
+          . You may disconnect a Google product inside Ockno or revoke
+          Ockno&apos;s access at any time through your{" "}
+          <A href="https://myaccount.google.com/permissions">
+            Google security settings
+          </A>
+          .
+        </P>
 
         <H3>YouTube API Services</H3>
         <P className="mb-4">

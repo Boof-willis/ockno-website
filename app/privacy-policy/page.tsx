@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 export default function PrivacyPolicy() {
   return (
-    <LegalShell title="Privacy Policy" lastUpdated="September 8, 2026">
+    <LegalShell title="Privacy Policy" lastUpdated="September 21, 2026">
       <section>
         <H2>Introduction</H2>
         <P>
@@ -78,7 +78,7 @@ export default function PrivacyPolicy() {
             <strong className="text-white">Integrated Platforms:</strong> Data
             from CRMs, advertising platforms (Google Ads, Meta), Google
             Analytics, Google Search Console, Google Calendar, Google Drive,
-            YouTube, and other services you connect to Ockno. Our use of
+            Google Sheets, YouTube, and other services you connect to Ockno. Our use of
             information received from Google APIs is described in the{" "}
             <strong className="text-white">Google API Services</strong> and{" "}
             <strong className="text-white">YouTube API Services</strong>{" "}
@@ -189,8 +189,10 @@ export default function PrivacyPolicy() {
             connections is sent to our AI processors — currently Anthropic
             (Claude) and Amazon Web Services — to produce the reports,
             recommendations, and content you ask for. For example, analyzing the
-            performance of a connected Google Ads account, or reading a video you
-            imported from Drive so ad copy can reference what it shows. These
+            performance of a connected Google Ads account, reading a video you
+            imported from Drive so ad copy can reference what it shows, or reading
+            rows from a spreadsheet you linked so a follow-up can reference them.
+            These
             providers act on our instructions under agreements that prohibit them
             from using your data to train their models, and we send only what a
             given task requires
@@ -212,6 +214,18 @@ export default function PrivacyPolicy() {
             Google API Services User Data Policy
           </A>
           , including the Limited Use requirements.
+        </P>
+
+        <H3>Sign in with Google</H3>
+        <P>
+          If you choose to sign in to Ockno with your Google account, Ockno
+          receives your name, email address, profile picture, and Google account
+          identifier. We use them only to create your Ockno account, sign you
+          in, and show who is signed in. Signing in with Google does not give
+          Ockno access to any other Google data. Each Google product below is a
+          separate connection that you approve on its own, and each of those
+          connections also reads the email address and name of the Google
+          account you connect so you can tell which account is linked.
         </P>
 
         <H3>Google Ads</H3>
@@ -278,6 +292,32 @@ export default function PrivacyPolicy() {
           individually select through the Google file picker and import them
           into your Ockno media library. We do not see, list, or access any
           other files in your Drive.
+        </P>
+
+        <H3>Google Sheets</H3>
+        <P className="mb-4">
+          When you connect Google Sheets, Ockno can only open spreadsheets you
+          individually select through the Google file picker, plus any
+          spreadsheet Ockno creates for you. We do not see, list, or access any
+          other files in your Drive.
+        </P>
+        <P className="mb-4">
+          Within those spreadsheets Ockno both reads and writes. It reads rows to
+          create or update contacts in your CRM and to start the automations you
+          configure, and it writes rows that your automations, your team, or the
+          systems you connect send to it. It can also create new spreadsheets in
+          your Drive at your request. Ockno never deletes a spreadsheet and never
+          modifies a file you have not linked.
+        </P>
+        <P className="mb-4">
+          If you enable an inbound link for a spreadsheet, anyone holding that
+          link can add rows to that one sheet. You can disable or replace the
+          link at any time.
+        </P>
+        <P>
+          Disconnecting Google Sheets stops all reading and writing and deletes
+          the stored credentials. Spreadsheets stay in your Drive exactly as they
+          are, and contacts already imported remain in Ockno.
         </P>
       </section>
 
