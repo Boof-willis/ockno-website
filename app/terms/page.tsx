@@ -538,9 +538,8 @@ export default function Terms() {
           from Ockno, the following applies:
         </P>
         <P className="mb-4">
-          When you opt in, Ockno sends you text messages about replies to your
-          questions and customer support, account notifications and service
-          updates.
+          When you opt in, Ockno sends you text messages about customer support,
+          account notifications, and special offers and promotions.
         </P>
         <P className="mb-4">Message frequency varies.</P>
         <P className="mb-4">
