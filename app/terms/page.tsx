@@ -537,6 +537,11 @@ export default function Terms() {
           If you provide your mobile number and consent to receive text messages
           from Ockno, the following applies:
         </P>
+        <P className="mb-4">
+          When you opt in, Ockno sends you text messages about replies to your
+          questions and customer support, account notifications and service
+          updates.
+        </P>
         <P className="mb-4">Message frequency varies.</P>
         <P className="mb-4">
           For help, reply HELP or contact us at{" "}
