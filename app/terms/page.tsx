@@ -532,7 +532,27 @@ export default function Terms() {
       </section>
 
       <section>
-        <H2>17. Contact Information</H2>
+        <H2>17. Text Messaging (SMS)</H2>
+        <P className="mb-4">
+          If you provide your mobile number and consent to receive text messages
+          from Ockno, the following applies:
+        </P>
+        <P className="mb-4">Message frequency varies.</P>
+        <P className="mb-4">
+          For help, reply HELP or contact us at{" "}
+          <A href="mailto:admin@ockno.com">admin@ockno.com</A>.
+        </P>
+        <P className="mb-4">
+          <strong className="text-white">
+            Reply STOP to cancel at any time. Reply HELP for help.
+          </strong>
+        </P>
+        <P className="mb-4">Message and data rates may apply.</P>
+        <P>Carriers are not liable for any delayed or undelivered messages.</P>
+      </section>
+
+      <section>
+        <H2>18. Contact Information</H2>
         <P className="mb-4">
           If you have any questions about these Terms of Service, please contact
           us:
