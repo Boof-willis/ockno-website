@@ -13,8 +13,6 @@ export const metadata: Metadata = {
   alternates: { canonical: "/pricing" },
 };
 
-const APP_URL = "https://app.ockno.com";
-
 /* Pass-through rates, grouped the way someone thinks about them. Labels come from the catalog;
    the groups and their order are this page's. A rate the catalog adds later still shows, under
    "Other". */
@@ -177,13 +175,10 @@ export default async function PricingPage() {
             <p className="mt-5 text-lg text-muted-foreground max-w-xl mx-auto text-balance">
               Plans differ only in how many AI credits they include. The bigger the plan, the less each credit costs.
             </p>
-            <div className="mt-9 flex flex-col sm:flex-row items-center justify-center gap-3">
+            <div className="mt-9 flex justify-center">
               <EarlyAccessButton className="btn-lift btn-pill btn-pill-primary w-full sm:w-auto focus:outline-none focus-visible:ring-2 focus-visible:ring-ring">
                 Get early access
               </EarlyAccessButton>
-              <a href={APP_URL} className="btn-lift btn-pill btn-pill-ghost w-full sm:w-auto focus:outline-none focus-visible:ring-2 focus-visible:ring-ring">
-                Sign in
-              </a>
             </div>
           </div>
         </section>
@@ -198,7 +193,7 @@ export default async function PricingPage() {
               {max.length > 0 && <MaxTierCard steps={max} tagline={max[0].tagline} />}
             </div>
             {custom && maxTop && (
-              <div className="card-nested mt-4 flex flex-col md:flex-row md:items-center justify-between gap-4 p-6">
+              <div className="card-elevated mt-4 flex flex-col md:flex-row md:items-center justify-between gap-4 p-7 md:p-8">
                 <div>
                   <p className="font-medium text-foreground">{custom.label}</p>
                   <p className="mt-1 text-sm text-muted-foreground">
