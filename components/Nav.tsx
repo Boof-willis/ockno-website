@@ -4,12 +4,14 @@ import { useEffect, useState } from "react";
 import { MenuToggleIcon } from "./ui/menu-toggle-icon";
 import EarlyAccessButton from "./EarlyAccessButton";
 
+// Absolute (/#...) so the same links work from /pricing and the other pages, not only home.
 const NAV_LINKS = [
-  { href: "#compare", label: "vs Agency" },
-  { href: "#build", label: "How it works" },
-  { href: "#platform", label: "Platform" },
-  { href: "#team", label: "Who we are" },
-  { href: "#faq", label: "FAQ" },
+  { href: "/#compare", label: "vs Agency" },
+  { href: "/#build", label: "How it works" },
+  { href: "/#platform", label: "Platform" },
+  { href: "/#team", label: "Who we are" },
+  { href: "/pricing", label: "Pricing" },
+  { href: "/#faq", label: "FAQ" },
 ];
 
 const APP_URL = "https://app.ockno.com";

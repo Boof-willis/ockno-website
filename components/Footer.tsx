@@ -16,19 +16,25 @@ export default function Footer() {
 
         <div className="flex flex-wrap justify-center gap-8 text-sm text-muted-foreground">
           <a
-            href="#compare"
+            href="/#compare"
             className="hover:text-foreground transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-sm"
           >
             vs Agency
           </a>
           <a
-            href="#build"
+            href="/#build"
             className="hover:text-foreground transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-sm"
           >
             How it works
           </a>
           <a
-            href="#faq"
+            href="/pricing"
+            className="hover:text-foreground transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-sm"
+          >
+            Pricing
+          </a>
+          <a
+            href="/#faq"
             className="hover:text-foreground transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-sm"
           >
             FAQ
