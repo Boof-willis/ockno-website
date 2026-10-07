@@ -1,5 +1,5 @@
 import Icon from "../ui/Icon";
-import EarlyAccessButton from "../EarlyAccessButton";
+import { signupUrl } from "@/lib/links";
 
 const ROWS = [
   {
@@ -125,9 +125,9 @@ export default function Compare() {
         </p>
 
         <div data-reveal className="text-center mt-10">
-          <EarlyAccessButton className="btn-lift btn-pill btn-pill-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-page">
-            Get early access
-          </EarlyAccessButton>
+          <a href={signupUrl()} className="btn-lift btn-pill btn-pill-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-page">
+            Start free
+          </a>
         </div>
       </div>
     </section>

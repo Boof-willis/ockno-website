@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import Icon from "@/components/ui/Icon";
-import EarlyAccessButton from "@/components/EarlyAccessButton";
+import { signupUrl } from "@/lib/links";
 import MaxTierCard from "@/components/pricing/MaxTierCard";
 import { credits, dollars, fetchCatalog, plansForTier, rate, type Catalog, type CatalogFee, type CatalogPlan } from "@/lib/pricing";
 
@@ -142,15 +142,14 @@ export default async function PricingPage() {
   };
   const maxTop = max[max.length - 1];
 
-  const primary = (
-    <EarlyAccessButton className="btn-lift btn-pill btn-pill-primary w-full focus:outline-none focus-visible:ring-2 focus-visible:ring-ring">
-      Get early access
-    </EarlyAccessButton>
-  );
-  const ghost = (
-    <EarlyAccessButton className="btn-lift btn-pill btn-pill-ghost w-full focus:outline-none focus-visible:ring-2 focus-visible:ring-ring">
-      Get early access
-    </EarlyAccessButton>
+  /* Each plan card signs up with that plan picked, by its catalog key. */
+  const planCta = (plan: CatalogPlan, label: string, variant: "primary" | "ghost") => (
+    <a
+      href={signupUrl(plan.key)}
+      className={`btn-lift btn-pill btn-pill-${variant} w-full focus:outline-none focus-visible:ring-2 focus-visible:ring-ring`}
+    >
+      {label}
+    </a>
   );
 
   const schema = {
@@ -176,9 +175,9 @@ export default async function PricingPage() {
               Plans differ only in how many AI credits they include. The bigger the plan, the less each credit costs.
             </p>
             <div className="mt-9 flex justify-center">
-              <EarlyAccessButton className="btn-lift btn-pill btn-pill-primary w-full sm:w-auto focus:outline-none focus-visible:ring-2 focus-visible:ring-ring">
-                Get early access
-              </EarlyAccessButton>
+              <a href={signupUrl()} className="btn-lift btn-pill btn-pill-primary w-full sm:w-auto focus:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+                Start free
+              </a>
             </div>
           </div>
         </section>
@@ -187,9 +186,9 @@ export default async function PricingPage() {
         <section aria-label="Plans" className="pb-10">
           <div className="max-w-[1440px] mx-auto px-6">
             <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-              {trial && <TierCard plan={trial} cta={ghost} />}
-              {base && <TierCard plan={base} cta={ghost} />}
-              {pro && <TierCard plan={pro} cta={primary} />}
+              {trial && <TierCard plan={trial} cta={planCta(trial, "Start free trial", "ghost")} />}
+              {base && <TierCard plan={base} cta={planCta(base, `Choose ${base.label}`, "ghost")} />}
+              {pro && <TierCard plan={pro} cta={planCta(pro, `Choose ${pro.label}`, "primary")} />}
               {max.length > 0 && <MaxTierCard steps={max} tagline={max[0].tagline} />}
             </div>
             {custom && maxTop && (
@@ -355,9 +354,9 @@ export default async function PricingPage() {
               {catalog.trial_days} days and {credits(trial?.included_credits)} AI credits. No card needed.
             </p>
             <div className="mt-9 flex justify-center">
-              <EarlyAccessButton className="btn-lift btn-pill btn-pill-primary w-full sm:w-auto focus:outline-none focus-visible:ring-2 focus-visible:ring-ring">
-                Get early access
-              </EarlyAccessButton>
+              <a href={signupUrl()} className="btn-lift btn-pill btn-pill-primary w-full sm:w-auto focus:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+                Start free
+              </a>
             </div>
           </div>
         </section>

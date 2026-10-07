@@ -1,5 +1,5 @@
 import Icon from "../ui/Icon";
-import EarlyAccessButton from "../EarlyAccessButton";
+import { signupUrl } from "@/lib/links";
 
 const FAQS = [
   {
@@ -70,10 +70,10 @@ export default function Faq() {
             No sales-page spin — including the honest answer on how fast
             you&apos;ll see results.
           </p>
-          <EarlyAccessButton className="btn-lift btn-pill btn-pill-ghost focus:outline-none focus-visible:ring-2 focus-visible:ring-ring">
-            Get early access
+          <a href={signupUrl()} className="btn-lift btn-pill btn-pill-ghost focus:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+            Start free
             <Icon icon="solar:arrow-right-linear" width={16} />
-          </EarlyAccessButton>
+          </a>
         </div>
 
         <div className="divide-y divide-border border-t border-border">

@@ -1,13 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import EarlyAccessButton from "../EarlyAccessButton";
 import type { CatalogPlan } from "@/lib/pricing";
 import { credits, dollars } from "@/lib/pricing";
+import { signupUrl } from "@/lib/links";
 
 /**
  * The Max tier is five plans sold as one card: a slider picks how many credits, and the price and
  * the per-credit saving move with it. Same maths as the app's plan picker, from the same catalog.
+ * The button signs up with the step the slider is on.
  */
 export default function MaxTierCard({ steps, tagline }: { steps: CatalogPlan[]; tagline: string | null }) {
   const [i, setI] = useState(0);
@@ -50,9 +51,12 @@ export default function MaxTierCard({ steps, tagline }: { steps: CatalogPlan[]; 
       </label>
 
       <div className="mt-auto pt-8">
-        <EarlyAccessButton className="btn-lift btn-pill btn-pill-primary w-full focus:outline-none focus-visible:ring-2 focus-visible:ring-ring">
-          Get early access
-        </EarlyAccessButton>
+        <a
+          href={signupUrl(plan.key)}
+          className="btn-lift btn-pill btn-pill-primary w-full focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        >
+          Choose {plan.label}
+        </a>
       </div>
     </div>
   );

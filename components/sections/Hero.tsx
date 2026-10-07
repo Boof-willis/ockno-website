@@ -2,7 +2,7 @@ import RotatingWord from "../RotatingWord";
 import { Reveal, RevealCard } from "../motion/Reveal";
 import { HeroScapeBack, HeroScapeFront } from "./HeroScape";
 import Eyebrow from "../Eyebrow";
-import EarlyAccessButton from "../EarlyAccessButton";
+import { signupUrl } from "@/lib/links";
 
 const ROTATING = [
   "learns your business.",
@@ -16,14 +16,14 @@ const ROTATING = [
 ];
 
 /* Eyebrow marquee. Every line is a claim already made elsewhere on this site —
-   the metadata positioning, the CTA subtext, and the early-access status. It
+   the metadata positioning, the CTA subtext, and the free trial terms. It
    points at #compare because that's where a sceptic's actual objection ("how is
    this different from an agency?") gets answered. Nothing here is aspirational;
    if a line stops being true, remove it. */
 const EYEBROW_LINES = [
   "Not a tool you operate — a hire that delivers",
   "No retainers. Cancel anytime.",
-  "Now in early access",
+  "Start free. No card needed.",
 ];
 
 /* Entrance timeline (seconds). Copy leads, the product screenshot follows —
@@ -78,9 +78,9 @@ export default function Hero() {
 
         <Reveal delay={T.cta} className="flex flex-col items-center">
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
-            <EarlyAccessButton className="btn-lift btn-pill btn-pill-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-page">
-              Get early access
-            </EarlyAccessButton>
+            <a href={signupUrl()} className="btn-lift btn-pill btn-pill-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-page">
+              Start free
+            </a>
             {/* Secondary CTA. On phones it's a bare text button — two stacked
                 pills read as two competing primaries — and from sm up it picks
                 the ghost pill back up. Spelled out in utilities rather than

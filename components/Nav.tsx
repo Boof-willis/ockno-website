@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { MenuToggleIcon } from "./ui/menu-toggle-icon";
-import EarlyAccessButton from "./EarlyAccessButton";
+import { APP_URL, signupUrl } from "@/lib/links";
 
 // Absolute (/#...) so the same links work from /pricing and the other pages, not only home.
 const NAV_LINKS = [
@@ -13,8 +13,6 @@ const NAV_LINKS = [
   { href: "/pricing", label: "Pricing" },
   { href: "/#faq", label: "FAQ" },
 ];
-
-const APP_URL = "https://app.ockno.com";
 
 export default function Nav() {
   const [open, setOpen] = useState(false);
@@ -97,9 +95,9 @@ export default function Nav() {
               this pill kept showing in the mobile bar next to the hamburger.
               On phones the CTA lives in the menu below instead. */}
           <div className="hidden lg:block">
-            <EarlyAccessButton className="btn-lift btn-pill btn-pill-primary btn-pill-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-page">
-              Get early access
-            </EarlyAccessButton>
+            <a href={signupUrl()} className="btn-lift btn-pill btn-pill-primary btn-pill-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-page">
+              Start free
+            </a>
           </div>
           <button
             type="button"
@@ -138,12 +136,13 @@ export default function Nav() {
                 {link.label}
               </a>
             ))}
-            <EarlyAccessButton
+            <a
+              href={signupUrl()}
               onClick={() => setOpen(false)}
               className="mt-6 btn-pill btn-pill-primary transition-colors"
             >
-              Get early access
-            </EarlyAccessButton>
+              Start free
+            </a>
           </div>
         </div>
       )}

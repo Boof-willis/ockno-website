@@ -382,16 +382,6 @@ html.js [data-reveal].is-inview {
   padding-inline: 1.5rem;
 }
 
-/* Orange accent fill — the site's warm sunset hue (~24°), reserved for the
-   highest-intent conversion action (the early-access form submit). */
-.btn-pill-accent {
-  background-color: hsl(24 90% 52%);
-  color: #fff;
-}
-.btn-pill-accent:hover {
-  background-color: hsl(24 90% 47%);
-}
-
 /* ---------------------------------------------------------------------------
    Hero eyebrow — pill with a cycling label and a flush circular chip.
    Geometry from the reference template. The asymmetric padding is load-bearing:

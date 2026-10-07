@@ -1,4 +1,4 @@
-import EarlyAccessButton from "../EarlyAccessButton";
+import { signupUrl } from "@/lib/links";
 
 /* Final CTA — bookends the hero: where the hero dissolves UP into night, the
    close rises out of the dark into a sunrise. The dusk/dawn scape lives in
@@ -40,9 +40,9 @@ export default function Cta() {
         </p>
 
         <div data-reveal={220} className="flex justify-center mb-6 mt-10">
-          <EarlyAccessButton className="btn-lift btn-pill btn-pill-primary w-full sm:w-auto focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-page">
-            Get early access
-          </EarlyAccessButton>
+          <a href={signupUrl()} className="btn-lift btn-pill btn-pill-primary w-full sm:w-auto focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-page">
+            Start free
+          </a>
         </div>
       </div>
     </section>
