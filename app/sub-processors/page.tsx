@@ -168,8 +168,8 @@ export default function SubProcessors() {
         <H2>Connected services</H2>
         <P>
           Services you connect to Ockno yourself, such as Google Ads, Meta,
-          Slack, GoHighLevel, Stripe, Square, Calendly, Google Calendar, and
-          YouTube, are not sub-processors. Data flows between Ockno and those
+          Slack, GoHighLevel, Stripe, Square, Shopify, Calendly, Google
+          Calendar, and YouTube, are not sub-processors. Data flows between Ockno and those
           services under your own account with that provider and only in the
           ways you configure. Disconnecting a service in Ockno stops that flow
           and deletes the stored access token immediately.

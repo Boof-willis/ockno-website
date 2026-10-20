@@ -380,6 +380,52 @@ export default function PrivacyPolicy() {
       </section>
 
       <section>
+        <H2>Shopify</H2>
+        <P className="mb-4">
+          If you connect a Shopify store, Ockno reads store data through
+          Shopify&apos;s API so your store can run on the same CRM and marketing
+          tools as the rest of your business. When you connect a store:
+        </P>
+        <UL>
+          <li>
+            We receive and store your customers (name, email, phone, address,
+            marketing consent), orders, checkouts, refunds, products and discount
+            codes, and keep them current through Shopify webhooks
+          </li>
+          <li>
+            We use that data to maintain contacts, attach purchases to them,
+            recover abandoned checkouts by email or text where the customer has
+            consented, measure which campaigns bring buyers, manage products and
+            discount codes from Ockno, and build advertising audiences from
+            buyers who have not opted out of data sharing
+          </li>
+          <li>
+            If you enable Ockno&apos;s web pixel, we receive browsing and purchase
+            events from your storefront and report them to the advertising
+            platforms you connect, so purchases are counted once
+          </li>
+          <li>
+            Store data is held on encrypted storage, transferred over TLS,
+            reachable only with authenticated access, and backed up daily
+          </li>
+          <li>
+            We honour Shopify&apos;s data requests: a customer&apos;s data is
+            reported on request, deleted when Shopify asks us to redact it, and
+            all of a store&apos;s data is deleted after the app is uninstalled
+          </li>
+          <li>
+            We do not sell store data, and we do not use it to market to your
+            customers on our own behalf
+          </li>
+        </UL>
+        <P className="mt-4">
+          You can disconnect your store at any time from Integrations in Ockno,
+          or by removing the Ockno app in your Shopify admin; either stops the
+          data flow and revokes Ockno&apos;s access.
+        </P>
+      </section>
+
+      <section>
         <H2>Data Retention</H2>
         <P>
           We retain your information for as long as your account is active or as
