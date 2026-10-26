@@ -32,7 +32,7 @@ const FAQS = [
   },
   {
     q: "Which ad platforms does it run?",
-    a: "Google Ads and Meta. Meta is live today and Google is expanding, and it reports real conversions back to both so your ads keep improving.",
+    a: "Google Ads and Meta, both live. It reports real conversions back to each so your ads keep improving.",
   },
   {
     q: "How fast will I see results?",
