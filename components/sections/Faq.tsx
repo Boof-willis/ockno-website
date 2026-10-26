@@ -4,23 +4,23 @@ import { signupUrl } from "@/lib/links";
 const FAQS = [
   {
     q: "Is this really cheaper than an agency?",
-    a: "Yes — a fraction of a typical retainer, and no cut of your ad spend. You get a whole AI team for far less than one junior account manager would cost you.",
+    a: "Yes. It costs a fraction of a typical retainer and takes no cut of your ad spend. You get a whole AI team for far less than one junior account manager would cost you.",
   },
   {
     q: "What if I already have an agency?",
-    a: "Most people come to Ockno to replace theirs. You can switch over whenever you're ready — there's no long contract holding you here, and the AI rebuilds your funnels and follow-up for you.",
+    a: "Most people come to Ockno to replace theirs. You can switch over whenever you're ready. There's no long contract holding you here, and the AI rebuilds your funnels and follow-up for you.",
   },
   {
     q: "Do I need to be technical or “good at marketing”?",
-    a: "No. Your AI team builds and runs it for you — ads, funnels, follow-up, the works. You just approve the big moves, like signing off on a bid.",
+    a: "No. Your AI team builds and runs your ads, funnels, and follow-up for you. You just approve the big moves, like signing off on a bid.",
   },
   {
     q: "How is this different from GoHighLevel or HubSpot?",
-    a: "Those give you the tools — then leave you to configure everything, wire up integrations, and learn the software. Ockno has the same tools in one place, but the AI builds it all for you from day one. All the power, none of the PhD.",
+    a: "Those give you the tools, then leave you to configure everything, wire up integrations, and learn the software. Ockno has the same tools in one place, but the AI builds it all for you from day one. All the power, none of the PhD.",
   },
   {
     q: "How long does setup take?",
-    a: "Minutes to onboard, not weeks. You answer a few questions (or point Ockno at your website) and the Brain builds your funnels, pipelines, calendars, ads, and contracts for you to review — no integration spaghetti.",
+    a: "Minutes to onboard, not weeks. You answer a few questions (or point Ockno at your website) and the Brain builds your funnels, pipelines, calendars, ads, and contracts for you to review. No integration spaghetti.",
   },
   {
     q: "Can agencies use it to run their clients?",
@@ -36,7 +36,7 @@ const FAQS = [
   },
   {
     q: "How fast will I see results?",
-    a: "Setup is quick, but it takes a few weeks of real jobs for the system to learn what a good customer looks like for you. Anyone promising instant, guaranteed numbers isn't being honest — results depend on your market, offer, and volume.",
+    a: "Setup is quick, but it takes a few weeks of real jobs for the system to learn what a good customer looks like for you. Anyone promising instant, guaranteed numbers isn't being honest. Results depend on your market, offer, and volume.",
   },
 ];
 
@@ -50,7 +50,7 @@ const FAQ_SCHEMA = {
   })),
 };
 
-/* Objection handling as a single-column accordion (native <details> — no
+/* Objection handling as a single-column accordion (native <details>, no
    client JS) beside a sticky header. One question open at a time is the
    reader's choice; the divide-y list keeps the section quiet either way. */
 export default function Faq() {
@@ -67,7 +67,7 @@ export default function Faq() {
             Questions, answered straight.
           </h2>
           <p className="text-muted-foreground text-lg mb-8">
-            No sales-page spin — including the honest answer on how fast
+            No sales-page spin, including the honest answer on how fast
             you&apos;ll see results.
           </p>
           <a href={signupUrl()} className="btn-lift btn-pill btn-pill-ghost focus:outline-none focus-visible:ring-2 focus-visible:ring-ring">
