@@ -19,11 +19,11 @@ export const metadata: Metadata = {
   manifest: "/site.webmanifest",
   title: "Ockno | The AI marketing operator",
   description:
-    "Ockno is an AI employee for your marketing. It learns your business and does the work — building funnels, running ads, and following up with every lead — then gets sharper every week. Service-as-a-Software: not a tool you operate, a hire that delivers.",
+    "Ockno is an AI marketing operator. It learns your business, builds funnels, runs ads, and follows up with every lead, then gets sharper every week. Service-as-a-Software: not a tool you operate, an operator that delivers.",
   openGraph: {
     title: "Ockno | The AI marketing operator",
     description:
-      "An AI employee for your marketing. It learns your business and does the work — funnels, ads, follow-up — then gets sharper every week. Not a tool you operate. A hire that delivers.",
+      "An AI marketing operator. It learns your business and runs your funnels, ads, and follow-up, then gets sharper every week. Not a tool you operate. An operator that delivers.",
     url: "https://www.ockno.com",
     siteName: "Ockno",
     type: "website",
@@ -44,7 +44,7 @@ const ORG_SCHEMA = {
   url: "https://www.ockno.com",
   logo: "https://www.ockno.com/images/ockno-logo.svg",
   description:
-    "Ockno is an AI employee for your marketing. It learns your business and does the work — building funnels, running ads, and following up with every lead.",
+    "Ockno is an AI marketing operator. It learns your business, builds funnels, runs ads, and follows up with every lead.",
 };
 
 const jsFlagScript = `
