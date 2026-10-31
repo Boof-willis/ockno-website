@@ -6,7 +6,8 @@ export default function LegalShell({
   children,
 }: {
   title: string;
-  lastUpdated: string;
+  // Legal pages show it; a page like Support has nothing to date.
+  lastUpdated?: string;
   children: React.ReactNode;
 }) {
   return (
@@ -40,9 +41,11 @@ export default function LegalShell({
             <h1 className="text-4xl md:text-5xl font-semibold tracking-tight text-foreground mb-4">
               {title}
             </h1>
-            <p className="text-muted-foreground text-sm font-medium">
-              Last Updated: {lastUpdated}
-            </p>
+            {lastUpdated && (
+              <p className="text-muted-foreground text-sm font-medium">
+                Last Updated: {lastUpdated}
+              </p>
+            )}
           </div>
 
           <div className="max-w-none space-y-12">{children}</div>

@@ -40,6 +40,12 @@ export default function Footer() {
             FAQ
           </a>
           <a
+            href="/support"
+            className="hover:text-foreground transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-sm"
+          >
+            Support
+          </a>
+          <a
             href="/privacy-policy"
             className="hover:text-foreground transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-sm"
           >

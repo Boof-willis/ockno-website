@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 export default function PrivacyPolicy() {
   return (
-    <LegalShell title="Privacy Policy" lastUpdated="September 21, 2026">
+    <LegalShell title="Privacy Policy" lastUpdated="October 31, 2026">
       <section>
         <H2>Introduction</H2>
         <P>
@@ -18,8 +18,9 @@ export default function PrivacyPolicy() {
           including campaign management, funnels, CRM, automations, and offline
           conversion tracking and attribution — for service businesses and
           agencies. This Privacy Policy explains how we collect, use, disclose,
-          and protect your information when you use our platform, website, and
-          related services (collectively, the &quot;Services&quot;).
+          and protect your information when you use our platform, website,
+          iPhone app, and related services (collectively, the
+          &quot;Services&quot;).
         </P>
         <P className="mt-4">
           By using our Services, you agree to the collection and use of
@@ -61,6 +62,13 @@ export default function PrivacyPolicy() {
             <strong className="text-white">Usage Data:</strong> Log data, device
             information, browser type, IP address, pages visited, and features
             used within our platform.
+          </li>
+          <li>
+            <strong className="text-white">Mobile Device Information:</strong>{" "}
+            If you use the Ockno iPhone app and allow notifications, your
+            device&apos;s push notification token, its name, and the app
+            version. See <strong className="text-white">Ockno iPhone App</strong>{" "}
+            below.
           </li>
           <li>
             <strong className="text-white">Cookies and Tracking:</strong> We use
@@ -136,7 +144,31 @@ export default function PrivacyPolicy() {
             <strong className="text-white">With Service Providers:</strong> We
             work with third-party vendors for hosting, payment processing,
             analytics, and customer support who are bound by confidentiality
-            obligations.
+            obligations. Our{" "}
+            <a
+              href="/sub-processors"
+              className="text-primary hover:text-primary-hover transition-colors underline underline-offset-2"
+            >
+              Sub-processors
+            </a>{" "}
+            page lists each one.
+          </li>
+          <li>
+            <strong className="text-white">With AI Providers:</strong> When you
+            use Ockno&apos;s AI features, your request and the parts of your
+            account needed to answer it are sent to our AI model providers:
+            Anthropic, OpenAI, and Google for the assistant, fal.ai for images and
+            video you ask it to create, and Voyage AI for searching the business
+            knowledge saved in your workspace. Anthropic, OpenAI, and Google do
+            not use data sent through their APIs to train their models.
+          </li>
+          <li>
+            <strong className="text-white">
+              With Communications Providers:
+            </strong>{" "}
+            Calls and texts you make through Ockno are carried by Twilio, and
+            email by Mailgun. Notifications to the Ockno iPhone app are
+            delivered through Expo and Apple&apos;s push notification service.
           </li>
           <li>
             <strong className="text-white">For Legal Compliance:</strong> When
@@ -425,6 +457,71 @@ export default function PrivacyPolicy() {
         </P>
       </section>
 
+      <section id="mobile-app">
+        <H2>Ockno iPhone App</H2>
+        <P className="mb-4">
+          The Ockno iPhone app signs in to the same account you use on the web.
+          It uses what is on your phone only for the features below, and only
+          when you use them:
+        </P>
+        <UL>
+          <li>
+            <strong className="text-white">Notifications:</strong> If you allow
+            notifications, the app sends us your device&apos;s push notification
+            token, its name, and the app version so we can deliver the alerts
+            you choose. Notifications are delivered through Expo and Apple&apos;s
+            push notification service. You can turn them off in your iPhone
+            Settings at any time, and signing out of the app removes the token.
+          </li>
+          <li>
+            <strong className="text-white">Microphone and calls:</strong> The app
+            uses your microphone only during a call you place or answer from your
+            business number. Calls are carried by Twilio. Your workspace keeps a
+            record of each call (the phone numbers, time, and length). If a
+            caller leaves a voicemail, the recording and a written transcript are
+            saved to your workspace.
+          </li>
+          <li>
+            <strong className="text-white">Camera, photos, and files:</strong>{" "}
+            The app opens your camera, photo library, or files only when you
+            choose to attach something to a message or chat, and receives only
+            the items you pick. It does not read the rest of your photo library.
+          </li>
+          <li>
+            <strong className="text-white">Card payments:</strong> If your
+            business takes card payments on the phone, the app uses your
+            location only while a payment is being taken, because our payment
+            processor, Stripe, requires it to prevent fraud.
+          </li>
+          <li>
+            <strong className="text-white">AI features:</strong> Before the app
+            sends anything to an AI provider, it shows you which providers it
+            uses and asks for your permission. You can withdraw it at any time
+            under AI data sharing in the app&apos;s Settings; the rest of the app
+            keeps working without it.
+          </li>
+          <li>
+            <strong className="text-white">Sign-in:</strong> Your sign-in is
+            kept in your iPhone&apos;s Keychain.
+          </li>
+          <li>
+            <strong className="text-white">No tracking:</strong> The app does
+            not track you across other companies&apos; apps or websites, does
+            not use your device&apos;s advertising identifier, and contains no
+            third-party advertising or analytics tools.
+          </li>
+          <li>
+            <strong className="text-white">Deleting your account:</strong> You
+            can delete your account in the app under Settings, then Delete
+            account. Your sign-in and profile are deleted right away. Records
+            you added to a business, such as contacts and appointments, belong
+            to that business&apos;s workspace and stay with it. If you are the
+            only owner of an organization, the request goes to our team, who
+            finish it and email you when it is done.
+          </li>
+        </UL>
+      </section>
+
       <section>
         <H2>Data Retention</H2>
         <P>
@@ -516,7 +613,9 @@ export default function PrivacyPolicy() {
           </li>
           <li>
             <strong className="text-white">Deletion:</strong> Request deletion of
-            your personal information, subject to certain exceptions.
+            your personal information, subject to certain exceptions. You can
+            also delete your account yourself in the Ockno iPhone app (see{" "}
+            <strong className="text-white">Ockno iPhone App</strong> above).
           </li>
           <li>
             <strong className="text-white">Portability:</strong> Request a

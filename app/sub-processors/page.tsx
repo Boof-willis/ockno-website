@@ -54,6 +54,12 @@ const AI: Row[] = [
     data: "Ad images, prompts, and brand assets you choose to generate from",
     location: "United States",
   },
+  {
+    name: "Voyage AI",
+    purpose: "Search over the business knowledge saved in a workspace",
+    data: "Text from the workspace's saved business knowledge and the searches run against it",
+    location: "United States",
+  },
 ];
 
 const MESSAGING: Row[] = [
@@ -65,8 +71,14 @@ const MESSAGING: Row[] = [
   },
   {
     name: "Twilio",
-    purpose: "SMS delivery and phone number provisioning",
-    data: "Recipient phone numbers and message content",
+    purpose: "Phone calls, SMS and MMS delivery, and phone number provisioning",
+    data: "Phone numbers, message content, and call audio",
+    location: "United States",
+  },
+  {
+    name: "Expo",
+    purpose: "Push notification delivery to the Ockno iPhone app",
+    data: "Device push tokens and notification content",
     location: "United States",
   },
 ];
@@ -115,7 +127,7 @@ function Table({ rows }: { rows: Row[] }) {
 
 export default function SubProcessors() {
   return (
-    <LegalShell title="Sub-processors" lastUpdated="September 9, 2026">
+    <LegalShell title="Sub-processors" lastUpdated="October 31, 2026">
       <section>
         <H2>Overview</H2>
         <P>
