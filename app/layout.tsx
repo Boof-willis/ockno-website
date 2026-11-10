@@ -17,13 +17,15 @@ export const metadata: Metadata = {
     apple: "/apple-touch-icon.png",
   },
   manifest: "/site.webmanifest",
-  title: "Ockno | The AI marketing employee",
+  title: "Ockno | The AI marketing brain",
+  // The positioning statement, verbatim — also the Organization schema below.
   description:
-    "Ockno is an AI employee for your marketing. It learns your business and does the work — building funnels, running ads, and following up with every lead — then gets sharper every week. Service-as-a-Software: not a tool you operate, a hire that delivers.",
+    "Ockno is an AI marketing brain that learns your business, tracks every lead from click to paid invoice, and fixes what’s costing you customers.",
   openGraph: {
-    title: "Ockno | The AI marketing employee",
+    title: "Ockno | The AI marketing brain",
+    // The tagline: short enough to survive a link preview's truncation.
     description:
-      "An AI employee for your marketing. It learns your business and does the work — funnels, ads, follow-up — then gets sharper every week. Not a tool you operate. A hire that delivers.",
+      "Ockno is an AI marketing brain that finds and fixes what’s costing you customers.",
     url: "https://www.ockno.com",
     siteName: "Ockno",
     type: "website",
@@ -44,7 +46,7 @@ const ORG_SCHEMA = {
   url: "https://www.ockno.com",
   logo: "https://www.ockno.com/images/ockno-logo.svg",
   description:
-    "Ockno is an AI employee for your marketing. It learns your business and does the work — building funnels, running ads, and following up with every lead.",
+    "Ockno is an AI marketing brain that learns your business, tracks every lead from click to paid invoice, and fixes what’s costing you customers.",
 };
 
 const jsFlagScript = `
@@ -88,10 +90,9 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(ORG_SCHEMA) }}
         />
-        {/* framer-motion renders its `initial` state into the SSR markup, so
-            without JS the hero would stay at opacity 0. Same contract as
-            `html.js [data-reveal]`: the hidden state only applies when JS runs.
-            A stylesheet !important beats an inline style. */}
+        {/* Belt and braces for the hero's entrance animations (CSS, see
+            components/motion/Reveal.tsx): if animations are blocked along with
+            JS, nothing is left sitting at its hidden first frame. */}
         <noscript>
           <style>{`[data-motion]{opacity:1!important;transform:none!important;}`}</style>
         </noscript>

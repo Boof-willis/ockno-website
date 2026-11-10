@@ -1,114 +1,57 @@
-"use client";
-
-import { motion, useReducedMotion } from "framer-motion";
-import type { ReactNode } from "react";
+import type { CSSProperties, ReactNode } from "react";
 
 /**
- * Load-time entrance primitives.
+ * Load-time entrance primitives, as plain CSS animations (globals.css,
+ * "Load-time entrances").
  *
- * Both use a critically-damped spring (bounce: 0) rather than a tween: it
- * decelerates without overshoot, which is what keeps a 1s move from reading
- * as sluggish. Transform/opacity only — no filters — per this codebase's
- * iOS-flicker history.
+ * These used framer-motion springs; the whole library shipped for this one
+ * file. A 1s ease-out-expo curve is the same critically-damped feel (fast
+ * start, no overshoot), runs off the main thread, and starts with the first
+ * paint instead of after hydration. Transform/opacity only — no filters — per
+ * this codebase's iOS-flicker history. Reduced motion is handled in the CSS.
  *
- * Delays are passed per-element rather than via staggerChildren so that Hero
- * stays a server component and only the animated leaves ship JS.
+ * Delays are passed per-element so the cascade is authored in one place (Hero's
+ * timeline). No client JS: Hero stays a server component all the way down.
  */
-
-const SPRING = { type: "spring" as const, duration: 1, bounce: 0 };
-
-/** Initial opacity is 0.001, not 0: keeps the layer composited so the first
- *  frame doesn't cost a paint. */
-const HIDDEN = 0.001;
 
 type Props = {
   children: ReactNode;
   /** seconds */
   delay?: number;
   className?: string;
-  style?: React.CSSProperties;
+  style?: CSSProperties;
 };
 
+const cx = (a: string, b?: string) => (b ? `${a} ${b}` : a);
+
 /** Fade up. The hero's headline/subhead/CTA pattern. */
-export function Reveal({
-  children,
-  delay = 0,
-  y = 24,
-  className,
-  style,
-}: Props & { y?: number }) {
-  const reduced = useReducedMotion();
-  if (reduced) {
-    return (
-      <div className={className} style={style}>
-        {children}
-      </div>
-    );
-  }
+export function Reveal({ children, delay = 0, y = 24, className, style }: Props & { y?: number }) {
   return (
-    <motion.div
+    <div
       data-motion
-      className={className}
-      style={style}
-      initial={{ opacity: HIDDEN, y }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ ...SPRING, delay }}
+      className={cx("enter enter-up", className)}
+      style={{ ...style, animationDelay: `${delay}s`, ["--enter-y" as string]: `${y}px` }}
     >
       {children}
-    </motion.div>
+    </div>
   );
 }
 
 /** Opacity only, no movement. For elements inside an already-moving parent —
  *  stacking transforms on a moving card reads as jitter. */
 export function Fade({ children, delay = 0, className, style }: Props) {
-  const reduced = useReducedMotion();
-  if (reduced) {
-    return (
-      <div className={className} style={style}>
-        {children}
-      </div>
-    );
-  }
   return (
-    <motion.div
-      data-motion
-      className={className}
-      style={style}
-      initial={{ opacity: HIDDEN }}
-      animate={{ opacity: 1 }}
-      transition={{ ...SPRING, delay }}
-    >
+    <div data-motion className={cx("enter enter-fade", className)} style={{ ...style, animationDelay: `${delay}s` }}>
       {children}
-    </motion.div>
+    </div>
   );
 }
 
 /** Fade up + settle from scale. The mock card itself. */
-export function RevealCard({
-  children,
-  delay = 0,
-  className,
-  style,
-}: Props) {
-  const reduced = useReducedMotion();
-  if (reduced) {
-    return (
-      <div className={className} style={style}>
-        {children}
-      </div>
-    );
-  }
+export function RevealCard({ children, delay = 0, className, style }: Props) {
   return (
-    <motion.div
-      data-motion
-      className={className}
-      style={style}
-      initial={{ opacity: HIDDEN, y: 44, scale: 0.965 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
-      transition={{ ...SPRING, duration: 1.2, delay }}
-    >
+    <div data-motion className={cx("enter enter-card", className)} style={{ ...style, animationDelay: `${delay}s` }}>
       {children}
-    </motion.div>
+    </div>
   );
 }

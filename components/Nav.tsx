@@ -6,8 +6,8 @@ import { APP_URL, signupUrl } from "@/lib/links";
 
 // Absolute (/#...) so the same links work from /pricing and the other pages, not only home.
 const NAV_LINKS = [
-  { href: "/#compare", label: "vs Agency" },
   { href: "/#build", label: "How it works" },
+  { href: "/#compare", label: "vs Agency" },
   { href: "/#platform", label: "Platform" },
   { href: "/#team", label: "Who we are" },
   { href: "/pricing", label: "Pricing" },
@@ -17,6 +17,7 @@ const NAV_LINKS = [
 export default function Nav() {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [atEnd, setAtEnd] = useState(false);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
@@ -24,6 +25,21 @@ export default function Nav() {
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  // Yield to the footer. Once it's on screen the page is over — the footer
+  // repeats the logo and links, and the CTA sits right above it — so the bar
+  // has nothing left to offer and only covers the closing headline: on a
+  // 900px-tall window the final frame parked "Stop buying clicks." under it.
+  useEffect(() => {
+    const footer = document.querySelector("footer");
+    if (!footer) return;
+    const io = new IntersectionObserver(([entry]) => setAtEnd(entry.isIntersecting));
+    io.observe(footer);
+    return () => io.disconnect();
+  }, []);
+
+  // Never while the menu is open: the toggle that closes it lives in the bar.
+  const hidden = atEnd && !open;
 
   // The menu covers the viewport now, so the page must not scroll behind it.
   useEffect(() => {
@@ -41,11 +57,11 @@ export default function Nav() {
           over the hero/scape. Sits below the nav (z-40), above page content. */}
       <div
         aria-hidden
-        className={`nav-scrim fixed top-0 left-0 w-full z-40 pointer-events-none${scrolled ? " is-visible" : ""}`}
+        className={`nav-scrim fixed top-0 left-0 w-full z-40 pointer-events-none${scrolled && !hidden ? " is-visible" : ""}`}
       />
 
       <nav
-        className={`nav-bar fixed top-0 w-full z-50 pt-4${scrolled ? " is-scrolled" : ""}`}
+        className={`nav-bar fixed top-0 w-full z-50 pt-4${scrolled ? " is-scrolled" : ""}${hidden ? " is-hidden" : ""}`}
         style={{ transform: "translateZ(0)" }}
       >
       {/* .nav-inner already supplies position:relative and z-index:1 (globals.css),

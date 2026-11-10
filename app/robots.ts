@@ -9,7 +9,7 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: "*",
         allow: "/",
-        disallow: ["/type-preview", "/api/"],
+        disallow: ["/type-preview", "/brain-lab", "/api/"],
       },
     ],
     sitemap: "https://www.ockno.com/sitemap.xml",

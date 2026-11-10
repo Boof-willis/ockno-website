@@ -33,13 +33,17 @@ const RINGS: Record<Ring, { radius: number; speed: number; scroll: number }> = {
   outer: { radius: 120, speed: -0.13, scroll: -0.0026 },
 };
 
+/* Six of the app's real integrations (see INTEGRATIONS in sections/Platform.tsx
+   for the full list and where it comes from), under the app's names. Only
+   providers the app actually offers belong here — the status chip under the
+   ring reads "6 sources connected". */
 const ITEMS: OrbitItem[] = [
   { id: "google-ads", ring: "inner", phase: 0, size: 38, label: "Google Ads", icon: "logos:google-ads" },
-  { id: "meta", ring: "inner", phase: (2 * Math.PI) / 3, size: 38, label: "Meta", icon: "logos:meta-icon" },
-  { id: "stripe", ring: "inner", phase: (4 * Math.PI) / 3, size: 38, label: "Stripe", icon: "logos:stripe" },
+  { id: "meta", ring: "inner", phase: (2 * Math.PI) / 3, size: 38, label: "Meta Ads", icon: "logos:meta-icon" },
+  { id: "stripe", ring: "inner", phase: (4 * Math.PI) / 3, size: 38, label: "Stripe", img: "/images/logos/stripe.svg" },
   { id: "highlevel", ring: "outer", phase: Math.PI / 6, size: 42, label: "HighLevel", img: "/images/logos/highlevel.svg" },
-  { id: "zapier", ring: "outer", phase: Math.PI / 6 + (2 * Math.PI) / 3, size: 42, label: "Zapier", icon: "logos:zapier-icon" },
-  { id: "gcal", ring: "outer", phase: Math.PI / 6 + (4 * Math.PI) / 3, size: 42, label: "Calendar", icon: "logos:google-calendar" },
+  { id: "youtube", ring: "outer", phase: Math.PI / 6 + (2 * Math.PI) / 3, size: 42, label: "YouTube", icon: "logos:youtube-icon" },
+  { id: "gcal", ring: "outer", phase: Math.PI / 6 + (4 * Math.PI) / 3, size: 42, label: "Google Calendar", icon: "logos:google-calendar" },
 ];
 
 /* The Ockno mark (symbol only), lifted from /images/ockno-logo.svg. */
@@ -107,6 +111,8 @@ const OrbitNode = memo(function OrbitNode({
             alt=""
             width={glyph}
             height={glyph}
+            loading="lazy"
+            decoding="async"
             style={{ width: glyph, height: glyph }}
             className="object-contain"
           />
@@ -159,8 +165,33 @@ export default function OrbitingConnect() {
       place(t, window.scrollY);
       raf = requestAnimationFrame(loop);
     };
-    raf = requestAnimationFrame(loop);
-    return () => cancelAnimationFrame(raf);
+    // Only run while the orbit is near the viewport: this loop writes six
+    // transforms a frame, and the panel is on screen for a small part of the
+    // page. `last` is reset on resume so the pause doesn't land as one big dt.
+    const start = () => {
+      if (raf) return;
+      last = performance.now();
+      raf = requestAnimationFrame(loop);
+    };
+    const stop = () => {
+      cancelAnimationFrame(raf);
+      raf = 0;
+    };
+    const host = nodeRefs.current.find(Boolean)?.parentElement;
+    place(0, window.scrollY);
+    if (!host || typeof IntersectionObserver === "undefined") {
+      start();
+      return stop;
+    }
+    const io = new IntersectionObserver(
+      ([entry]) => (entry.isIntersecting ? start() : stop()),
+      { rootMargin: "200px 0px" },
+    );
+    io.observe(host);
+    return () => {
+      io.disconnect();
+      stop();
+    };
   }, []);
 
   return (

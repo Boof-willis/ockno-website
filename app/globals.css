@@ -411,6 +411,8 @@ html.js [data-reveal].is-inview {
    happens to be passing through. Masked at both edges — the reference hard-clips
    its text, which it gets away with because every one of its items is the same
    string; with items of differing length a hard cut reads as broken glyphs.
+   The fade is ~2.5 glyphs wide: at 12px a letter went from invisible to full in
+   less than its own width, so the edges still read as chopped text.
    mask-image only — no backdrop-filter (see 1beacd0). */
 .eyebrow-viewport {
   position: relative;
@@ -419,15 +421,15 @@ html.js [data-reveal].is-inview {
   mask-image: linear-gradient(
     to right,
     transparent 0,
-    black 12px,
-    black calc(100% - 12px),
+    black 28px,
+    black calc(100% - 28px),
     transparent 100%
   );
   -webkit-mask-image: linear-gradient(
     to right,
     transparent 0,
-    black 12px,
-    black calc(100% - 12px),
+    black 28px,
+    black calc(100% - 28px),
     transparent 100%
   );
 }
@@ -803,21 +805,101 @@ html.lenis body {
   }
 }
 
-/* Slim, subtle horizontal scrollbar for the overflow-scroll comparison table —
-   the default OS bar is thick and heavy under it. */
-.scroll-x-thin {
-  scrollbar-width: thin;
-  scrollbar-color: hsl(var(--border)) transparent;
+/* ---------------------------------------------------------------------------
+   Ambient light — the scapes' sunset, carried faintly through the page's
+   middle. Without it the warm hue lives only in the hero and the closing dawn,
+   and the five sections between them read as one long flat gray. One soft
+   radial per section, alternating sides so the light seems to drift as you
+   scroll.
+
+   Each light's vertical reach (0.7 × its y-radius, where the gradient hits
+   transparent) stays inside its section: a glow that reached the top or bottom
+   edge would stop dead in a hard line against the next section's fill. The
+   left/right viewport edges can clip it freely.
+
+   Pure gradient on a pseudo-element: no blur filter, no animation, nothing for
+   the compositor to repaint (see 1beacd0). isolation keeps the z-index:-1
+   layer above the section's own fill and below everything in it.
+--------------------------------------------------------------------------- */
+.ambient {
+  position: relative;
+  isolation: isolate;
 }
-.scroll-x-thin::-webkit-scrollbar {
-  height: 6px;
+.ambient::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(
+    var(--ambient-shape),
+    hsl(28 90% 58% / var(--ambient-alpha, 0.08)),
+    transparent 70%
+  );
 }
-.scroll-x-thin::-webkit-scrollbar-track {
-  background: transparent;
+/* Behind a left-aligned section header. */
+.ambient-left {
+  --ambient-shape: 760px 380px at 12% 300px;
 }
-.scroll-x-thin::-webkit-scrollbar-thumb {
-  background: hsl(var(--border));
-  border-radius: 9999px;
+/* Behind a right-hand header column. */
+.ambient-right {
+  --ambient-shape: 760px 380px at 88% 300px;
+}
+
+/* ---------------------------------------------------------------------------
+   Midnight band (components/MidnightScape.tsx) — a full-bleed image that rises
+   out of the black page and dissolves back into it, opening the comparison
+   section. --midnight-h lives on the section so the band and the content's
+   offset read the same number: the heading always lands in the lower fade,
+   whatever the viewport height.
+--------------------------------------------------------------------------- */
+.midnight-section {
+  --midnight-h: clamp(400px, 62vh, 680px);
+}
+.midnight {
+  height: var(--midnight-h);
+}
+/* Black overhead, deepening to a cool, moonlit haze low in the valley — the
+   one cool light on the page, between the warm dusk and dawn. */
+.midnight-sky {
+  background:
+    radial-gradient(55% 42% at 50% 74%, hsl(228 22% 24% / 0.6), transparent 72%),
+    linear-gradient(to bottom, #000 0%, #04050a 38%, #0b0d16 64%, #121523 100%);
+}
+.midnight-fade {
+  background:
+    linear-gradient(to bottom, #000 0%, rgb(0 0 0 / 0) 24%),
+    linear-gradient(to bottom, rgb(0 0 0 / 0) 50%, rgb(0 0 0 / 0.82) 78%, #000 95%);
+}
+.midnight-offset {
+  padding-top: calc(var(--midnight-h) * 0.56);
+}
+/* The hill and tree layers, centred. */
+.midnight-layer {
+  left: 50%;
+  transform: translateX(-50%);
+}
+/* On phones the art (pinned to 1100px wide) only shows its middle third —
+   the valley between the hills, dark slopes on a dark sky, so the band read
+   as empty. Slide it to frame the right-hand hill's moonlit face instead.
+   -70% keeps the art's right edge past the viewport's at every width up to
+   640px, so the tree line never ends mid-screen. */
+@media (max-width: 639px) {
+  .midnight-layer {
+    transform: translateX(-70%);
+  }
+}
+
+/* "Built by operators" — black that settles into the dawn sky's own top colour
+   (#080706, .dawn-sky), so it hands off to the FAQ's starfield with no seam. */
+.section-to-night {
+  background: linear-gradient(to bottom, #000 45%, #080706 100%);
+}
+
+/* Platform's revenue bars — the chart's payoff, lit in the same sunrise ramp
+   as the scapes rather than the monochrome off-white. */
+.bar-sunrise {
+  background: linear-gradient(to top, hsl(22 70% 40%), hsl(33 95% 70%));
 }
 
 /* Ridge layers are bottom-anchored; --raise lifts a layer off the bottom so its
@@ -1083,17 +1165,24 @@ html.js [data-focus-item].is-focus {
   isolation: isolate;
 }
 
-/* Dark scrim under the nav — a short top-anchored gradient that fades in once
-   scrolled, so the nav's text/logo keep contrast over the bright hero scape.
-   Opacity-only transition; sits on its own layer so it never touches paint of
-   the nav content above it. */
+/* Dark scrim under the nav — a top-anchored gradient that fades in once
+   scrolled. It's the nav's only backing (no blur, see .nav-bar::before), so it
+   has to be effectively opaque behind the logo, links and CTA (y 30–66px): at
+   the old 92px/0.55 ramp, headings and table rows showed through the links at
+   roughly half strength. The feather starts below them, so content reads as
+   sliding under the bar rather than colliding with it, and it's short enough
+   that the Build cards pinned at 100px only catch a faint shadow up top. */
 .nav-scrim {
-  height: 92px;
+  height: 120px;
+  /* Pure black, matching the page: any lighter tint shows as a faint band at
+     the top of the black sections, especially on OLED phones. */
   background: linear-gradient(
     to bottom,
-    hsl(0 0% 0% / 1),
-    hsl(0 0% 0% / 0.55) 42%,
-    hsl(0 0% 0% / 0) 100%
+    hsl(0 0% 0% / 1) 0px,
+    hsl(0 0% 0% / 0.98) 56px,
+    hsl(0 0% 0% / 0.9) 68px,
+    hsl(0 0% 0% / 0.55) 84px,
+    hsl(0 0% 0% / 0) 120px
   );
   opacity: 0;
   transition: opacity 0.3s ease;
@@ -1138,6 +1227,23 @@ html.js .oldway-word {
   z-index: 1;
   transform: translateZ(0);
   backface-visibility: hidden;
+  transition:
+    opacity 0.3s ease,
+    visibility 0s linear 0s;
+}
+/* The bar yielding to the footer (Nav's atEnd). Faded on .nav-inner, not the
+   nav itself: the nav's nav-in entrance animation fills `both`, and an
+   animation's held opacity overrides any declared one. visibility flips only
+   once the fade has finished, and takes the hidden links out of the tab order. */
+.nav-bar.is-hidden {
+  pointer-events: none;
+}
+.nav-bar.is-hidden .nav-inner {
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 0.3s ease,
+    visibility 0s linear 0.3s;
 }
 
 /* Marquee animation - slow continuous scroll */
@@ -1182,4 +1288,35 @@ html.js .oldway-word {
 button:hover,
 button:active {
   will-change: transform;
+}
+
+/* --------------------------------------------------------------------------
+   Load-time entrances (components/motion/Reveal.tsx). CSS, not a JS spring:
+   ease-out-expo over 1s decelerates without overshoot, and the animation
+   starts with first paint. `both` holds the hidden first frame through the
+   delay. Opacity starts at 0.001, not 0, so the layer is composited from the
+   first frame. Transform/opacity only.
+-------------------------------------------------------------------------- */
+@keyframes enter-up {
+  from { opacity: 0.001; transform: translate3d(0, var(--enter-y, 24px), 0); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes enter-fade {
+  from { opacity: 0.001; }
+  to { opacity: 1; }
+}
+@keyframes enter-card {
+  from { opacity: 0.001; transform: translate3d(0, 44px, 0) scale(0.965); }
+  to { opacity: 1; transform: none; }
+}
+.enter {
+  animation-duration: 1s;
+  animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+  animation-fill-mode: both;
+}
+.enter-up { animation-name: enter-up; }
+.enter-fade { animation-name: enter-fade; }
+.enter-card { animation-name: enter-card; animation-duration: 1.2s; }
+@media (prefers-reduced-motion: reduce) {
+  .enter { animation: none; }
 }

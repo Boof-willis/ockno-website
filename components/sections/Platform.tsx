@@ -15,7 +15,7 @@ const LOOP_STEPS = [
   {
     n: "02",
     title: "Qualified lead",
-    body: "Shift the ads to chase the leads that actually book a call or ask for a quote.",
+    body: "Shift the ads to chase the leads that actually book a call, ask for a quote, or start a checkout.",
     primary: false,
   },
   {
@@ -33,21 +33,37 @@ const TOOLKIT = [
   "Documents & e-sign",
   "Calendars & booking",
   "Email & SMS inbox",
-  "Media library",
+  "AI Studio & media library",
   "Custom domains",
 ];
 
-const INTEGRATIONS = [
-  { icon: "solar:plain-linear", label: "Google Ads" },
-  { icon: "solar:plain-linear", label: "Meta" },
-  { icon: "solar:bolt-circle-linear", label: "GoHighLevel" },
-  { icon: "solar:link-circle-linear", label: "HubSpot" },
-  { icon: "solar:cloud-linear", label: "Salesforce" },
-  { icon: "solar:card-linear", label: "Stripe" },
-  { icon: "solar:phone-calling-linear", label: "CallRail" },
-  { icon: "solar:calendar-mark-linear", label: "Google Calendar" },
-  { icon: "solar:calendar-date-linear", label: "Calendly" },
-  { icon: "solar:server-path-linear", label: "Webhooks / Zapier" },
+/* Exactly what the app's Integrations page offers, in its order and under its
+   names (ockno-app components/integrations/providers.tsx): the shared
+   workspace connections, then the personal ones. Not listed: Google Business
+   Profile (built, but hidden until Google allowlists the API) and the
+   coming-soon Outlook, Apple Calendar and Zoom — add each here when it ships.
+
+   Real marks, icon-only, the way the app's cards show them. `icon` is an
+   Iconify name; `img` is a local file for the marks Iconify lacks or only has
+   as a wordmark. Square and GitHub are single-colour marks drawn in
+   currentColor, so they stay visible on the dark theme. */
+const INTEGRATIONS: { label: string; icon?: string; img?: string }[] = [
+  { label: "Google Ads", icon: "logos:google-ads" },
+  { label: "Meta Ads", icon: "logos:meta-icon" },
+  { label: "YouTube", icon: "logos:youtube-icon" },
+  { label: "HighLevel", img: "/images/logos/highlevel.svg" },
+  { label: "Stripe", img: "/images/logos/stripe.svg" },
+  { label: "Square", icon: "simple-icons:square" },
+  { label: "Slack", icon: "logos:slack-icon" },
+  { label: "Calendly", img: "/images/logos/calendly.png" },
+  { label: "Google Sheets", img: "/images/logos/google-sheets.svg" },
+  { label: "Google Analytics", icon: "logos:google-analytics" },
+  { label: "Search Console", icon: "logos:google-search-console" },
+  { label: "Zapier", icon: "logos:zapier-icon" },
+  { label: "Shopify", icon: "logos:shopify" },
+  { label: "Google Calendar", icon: "logos:google-calendar" },
+  { label: "Google Drive", icon: "logos:google-drive" },
+  { label: "GitHub", icon: "simple-icons:github" },
 ];
 
 /* Mini chart bars — same silhouette as the hero mock, echoed at tile scale. */
@@ -56,7 +72,7 @@ const BARS_PRIMARY = [75, 85, 80];
 
 export default function Platform() {
   return (
-    <section id="platform" className="py-28 md:py-36 bg-page border-t border-border">
+    <section id="platform" className="ambient ambient-right py-20 md:py-28 bg-black">
       <div className="max-w-[1440px] mx-auto px-6">
         {/* Asymmetric header: headline left, supporting copy right. */}
         <div className="grid lg:grid-cols-[1.2fr_1fr] gap-6 lg:gap-20 items-end mb-14 md:mb-16">
@@ -177,7 +193,7 @@ export default function Platform() {
               {BARS_PRIMARY.map((h, i) => (
                 <div key={`p${i}`} className="w-[10%] h-full flex items-end mx-auto">
                   <div
-                    className="w-full rounded-t-sm bg-gradient-to-t from-primary-muted to-primary"
+                    className="w-full rounded-t-sm bar-sunrise"
                     style={{ height: `${h}%` }}
                   />
                 </div>
@@ -232,7 +248,7 @@ export default function Platform() {
               Works with your stack.
             </h3>
             <p className="text-sm text-muted-foreground leading-relaxed mb-7">
-              Plugs into your ad platforms, CRM, and payments — every lead
+              Plugs into your ad platforms, CRM, store, and payments — every lead
               tracked back to the exact ad and click that produced it. No rebuild
               required.
             </p>
@@ -242,7 +258,20 @@ export default function Platform() {
                   key={chip.label}
                   className="px-3.5 py-1.5 rounded-full bg-nested border border-border text-[13px] text-foreground flex items-center gap-2 hover:border-primary/30 transition-colors"
                 >
-                  <Icon icon={chip.icon} width={15} className="text-primary" />
+                  {chip.img ? (
+                    /* eslint-disable-next-line @next/next/no-img-element */
+                    <img
+                      src={chip.img}
+                      alt=""
+                      width={15}
+                      height={15}
+                      loading="lazy"
+                      decoding="async"
+                      className="w-[15px] h-[15px] object-contain shrink-0"
+                    />
+                  ) : (
+                    <Icon icon={chip.icon!} width={15} className="text-foreground shrink-0" />
+                  )}
                   {chip.label}
                 </div>
               ))}

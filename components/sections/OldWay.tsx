@@ -65,7 +65,7 @@ export default function OldWay() {
       id="old-way"
       ref={sectionRef}
       className="relative bg-black"
-      style={{ height: "165vh" }}
+      style={{ height: "145vh" }}
     >
       {/* bg-black here too, not just on the section: WebKit paints a 165vh
           single-color section in lazy tiles, and an unpainted tile shows the

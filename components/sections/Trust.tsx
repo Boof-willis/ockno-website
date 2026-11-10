@@ -1,4 +1,5 @@
 import Icon from "../ui/Icon";
+import Stars, { type Star } from "../ui/stars";
 
 /* The trust moment: who built this. "Who it's for" was cut — the fit is already
    settled in the hero ("Built for local business owners running their own ads")
@@ -11,7 +12,7 @@ const FOUNDERS = [
     initials: "S",
     name: "Spencer",
     role: "Performance marketing",
-    image: "/images/spencer.png",
+    image: "/images/spencer.webp",
     statIcon: "solar:chart-2-linear",
     highlight: "$1M+ ad spend managed",
     body: "Ran a performance marketing agency for years. Built the first closed-loop system by hand — the one that became Ockno.",
@@ -20,16 +21,59 @@ const FOUNDERS = [
     initials: "J",
     name: "Joel",
     role: "Engineering",
-    image: "/images/joel.png",
+    image: "/images/joel.webp",
     statIcon: "solar:code-linear",
     highlight: "Trading bots → production SaaS",
     body: "Has built everything from trading bots to manufacturing SaaS. Turned the prototype into real software you can trust with your budget.",
   },
 ];
 
+/* The FAQ's night sky starts here: stars through the lower part of the section,
+   faded in from nothing (see the mask) so they reach the FAQ's own starfield at
+   full strength and there's no line where the sky begins. */
+const STARS: Star[] = [
+  { x: 57, y: 70.4, s: 1.2, o: 0.6, du: 4.3, de: 0.7 },
+  { x: 58.2, y: 30, s: 2.1, o: 0.68, du: 5, de: 1.7 },
+  { x: 4.8, y: 21.4, s: 1.7, o: 0.69, du: 3.8, de: 1 },
+  { x: 89.4, y: 78.9, s: 1.6, o: 0.69, du: 3.8, de: 2 },
+  { x: 44.5, y: 19.9, s: 1.2, o: 0.46, du: 3.2, de: 0.4 },
+  { x: 80.3, y: 66.3, s: 1.5, o: 0.5, du: 3.3, de: 0.1 },
+  { x: 47.4, y: 49.5, s: 1.4, o: 0.7, du: 3.3, de: 1.5 },
+  { x: 34.9, y: 44.5, s: 2.6, o: 0.67, du: 4.2, de: 1 },
+  { x: 0.1, y: 23.5, s: 2, o: 0.9, du: 4.4, de: 1.7 },
+  { x: 87.9, y: 49.9, s: 2.2, o: 0.65, du: 4.8, de: 1.2 },
+  { x: 16.9, y: 21.6, s: 1.7, o: 0.68, du: 4.6, de: 0.1 },
+  { x: 69.8, y: 70, s: 1.5, o: 0.8, du: 3.9, de: 1 },
+  { x: 40.6, y: 49.8, s: 2.4, o: 0.66, du: 3.4, de: 2.4 },
+  { x: 63.7, y: 87.4, s: 2.3, o: 0.87, du: 3.8, de: 0.7 },
+  { x: 64.2, y: 63.2, s: 2.2, o: 0.71, du: 4.5, de: 1.1 },
+  { x: 82.2, y: 56.2, s: 2.5, o: 0.65, du: 3.5, de: 0.3 },
+  { x: 18, y: 79.6, s: 1.8, o: 0.93, du: 4.4, de: 1.8 },
+  { x: 75.1, y: 82.1, s: 2.1, o: 0.71, du: 4, de: 2.3 },
+  { x: 50.3, y: 95, s: 1.6, o: 0.51, du: 3.6, de: 0.9 },
+  { x: 66, y: 73.3, s: 2.2, o: 0.94, du: 4.3, de: 1.6 },
+  { x: 89.5, y: 62.4, s: 1.3, o: 0.67, du: 4.8, de: 0.3 },
+  { x: 13.1, y: 53.9, s: 1.3, o: 0.57, du: 4.4, de: 0.2 },
+  { x: 92.7, y: 31.4, s: 1.6, o: 0.52, du: 3.2, de: 1.1 },
+  { x: 43.2, y: 87.7, s: 1.8, o: 0.89, du: 3.7, de: 0.4 },
+  { x: 53, y: 31.1, s: 1.3, o: 0.92, du: 4.6, de: 0 },
+  { x: 2.9, y: 88, s: 2.2, o: 0.53, du: 3.4, de: 1.3 },
+  { x: 30.6, y: 45.3, s: 1.8, o: 0.57, du: 3.9, de: 0.6 },
+  { x: 99.3, y: 48.2, s: 2.2, o: 0.63, du: 4.8, de: 1.5 },
+  { x: 27.4, y: 92.6, s: 1.5, o: 0.74, du: 4.1, de: 1.9 },
+  { x: 8.7, y: 70.2, s: 1.9, o: 0.62, du: 3.6, de: 0.8 },
+];
+
 export default function Trust() {
   return (
-    <section id="team" className="py-28 md:py-32 bg-card border-t border-border">
+    <section id="team" className="ambient ambient-left section-to-night py-24 md:py-28">
+      {/* z-[-1], same layer as the ambient light but later, so the stars sit
+          over its glow and under everything else in the section. */}
+      <Stars
+        stars={STARS}
+        mask="linear-gradient(to bottom, transparent 22%, black 88%)"
+        className="z-[-1]"
+      />
       <div className="max-w-[1440px] mx-auto px-6">
         <div className="max-w-2xl mb-12 md:mb-14" data-reveal>
           <div className="eyebrow mb-5">Built by operators</div>
@@ -58,6 +102,8 @@ export default function Trust() {
                   alt={f.name}
                   width={176}
                   height={176}
+                  loading="lazy"
+                  decoding="async"
                   className="w-full sm:w-44 aspect-square rounded-2xl object-cover border border-border shrink-0"
                 />
               ) : (

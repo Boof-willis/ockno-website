@@ -164,14 +164,6 @@ export default function DawnScape() {
           be re-keyed on mobile to follow the lowered sun. */}
       <div className="dawn-sky absolute inset-0" />
 
-      {/* Seam: a short blend from the card-dark section above into the black night
-          sky, so the FAQ flows in with no line — and the rest of the FAQ stays
-          solid black under the stars. */}
-      <div
-        className="absolute inset-x-0 top-0 h-[10vh]"
-        style={{ background: "linear-gradient(to bottom, hsl(var(--background-card)), transparent)" }}
-      />
-
       {/* Stars, masked to the night band so they vanish before the sunrise. */}
       <div
         className="absolute inset-0"
@@ -243,6 +235,8 @@ export default function DawnScape() {
             alt=""
             width={2560}
             height={1429}
+            loading="lazy"
+            decoding="async"
             draggable={false}
             className="relative left-1/2 -translate-x-1/2 w-full min-w-[1400px] max-w-none h-auto select-none"
             style={{ filter: `brightness(${r.brightness}) saturate(1.35)` }}

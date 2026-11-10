@@ -13,8 +13,11 @@ import Trust from "@/components/sections/Trust";
 import Faq from "@/components/sections/Faq";
 import Cta from "@/components/sections/Cta";
 
-/* Eight sections, one funnel: hero → proof → problem/comparison → how it
-   works → platform → fit & trust → objections → close. */
+/* Eight sections, one funnel: hero → problem → product → how it works (and the
+   payoff number) → versus an agency → platform depth → trust → objections →
+   close. Ordered by what a prospect asks next: what is it, will it be work for
+   me, why is it better than what I pay for now, what else is in it, who built
+   it. The nav and footer links follow the same order. */
 export default function Home() {
   return (
     <>
@@ -28,8 +31,8 @@ export default function Home() {
         <Hero />
         <OldWay />
         <Features />
-        <Compare />
         <Build />
+        <Compare />
         <Platform />
         <Trust />
 

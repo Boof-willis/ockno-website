@@ -4,16 +4,16 @@
    an inset "visual panel"; the panel alternates sides down the page (right →
    left → right). No browser chrome — the visuals float on an ambient panel.
 
-   Two scroll-linked touches, both iOS-safe (this codebase dropped
-   backdrop-filter and raw scroll-transforms after a flicker history): the Brain
-   frame sequence is scrubbed from card 1's scroll progress, and the connect
-   ring rotates via --ring-rot on <html>. rAF-throttled, transform/opacity only,
-   and both idle under reduced motion. The "glass" panels are faked with
+   Scroll-linked touches, all iOS-safe (this codebase dropped backdrop-filter
+   and raw scroll-transforms after a flicker history): the 3D Brain builds from
+   card 1's scroll progress, and card 3's cost line draws in. rAF-throttled,
+   and idle under reduced motion. The "glass" panels are faked with
    translucent fills + inner borders — no real blur. */
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, type MutableRefObject } from "react";
 import Icon from "../ui/Icon";
 import OrbitingConnect from "../ui/orbiting-connect";
+import Brain3D from "../ui/brain-3d";
 
 const STEPS = [
   {
@@ -28,7 +28,7 @@ const STEPS = [
     n: "02",
     eyebrow: "Connections",
     title: "Connect your ad platforms",
-    body: "Link Google and Meta in a couple of clicks. No pixels to wrestle, no integration spaghetti, no rebuild of what you already run.",
+    body: "Link Google and Meta in a couple of clicks, then your payments, store, and calendar the same way. No pixels to wrestle, no integration spaghetti, no rebuild of what you already run.",
     tag: "Your whole stack, wired in minutes.",
     visual: "connect" as const,
   },
@@ -57,13 +57,6 @@ const BUILDS = [
   { icon: "solar:file-check-linear", label: "Estimates & contracts" },
 ];
 
-/* Brain frame sequence (single spark → full neural brain), scrubbed by scroll. */
-const FRAME_COUNT = 56;
-const FRAMES = Array.from(
-  { length: FRAME_COUNT },
-  (_, i) => `/train-seq/frame-${String(i + 1).padStart(3, "0")}.jpg`,
-);
-
 /* Ambient backdrop shared by the connect + watch panels: a warm top glow over a
    faint, masked grid. */
 function PanelBg() {
@@ -89,20 +82,17 @@ function PanelBg() {
   );
 }
 
-/* Panel 1 — the Brain forming, full-bleed, scrubbed by scroll. */
-function VisualTrain({ frame }: { frame: number }) {
+/* Panel 1 — the Brain forming, in 3D (components/ui/brain-3d), built by scroll:
+   a spark as the card rises, the whole brain by the time it pins. */
+function VisualTrain({ progress }: { progress: MutableRefObject<number> }) {
   return (
     <div
       data-visual="train"
-      className="relative w-full h-full h-full min-h-[300px] lg:min-h-0 rounded-2xl overflow-hidden bg-black flex items-center justify-center"
+      role="img"
+      aria-label="Ockno building its knowledge of your business"
+      className="relative w-full h-full min-h-[300px] lg:min-h-0 rounded-2xl overflow-hidden bg-black"
     >
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        src={FRAMES[frame]}
-        alt="Ockno building its knowledge of your business"
-        className="w-full h-full object-contain select-none"
-        draggable={false}
-      />
+      <Brain3D progress={progress} className="absolute inset-0 w-full h-full" />
       <div
         className="absolute inset-0 pointer-events-none rounded-3xl"
         style={{ boxShadow: "inset 0 0 90px 24px rgba(0,0,0,0.55)" }}
@@ -213,26 +203,19 @@ function VisualWatch() {
 const PIN = 100;
 
 export default function Build() {
-  const [frame, setFrame] = useState(0);
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
+  // The 3D Brain's build progress (0–1): written by the scroll pass below, read
+  // by the canvas's own frame loop. A ref, so scrolling never re-renders React.
+  const brainProgress = useRef(0);
 
-  // Preload the Brain frames so scrubbing never hits the network.
-  useEffect(() => {
-    FRAMES.forEach((src) => {
-      const im = new window.Image();
-      im.src = src;
-    });
-  }, []);
-
-  // Scroll-linked visuals: Brain frame (from card 1's transit) + ring rotation.
-  // rAF-throttled, transform/opacity only; idle under reduced motion.
+  // Scroll-linked visuals: the Brain's build (from card 1's transit), card 3's
+  // cost line, and the stack's recede. rAF-throttled; idle under reduced motion.
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      setFrame(FRAME_COUNT - 1);
+      brainProgress.current = 1;
       return;
     }
     let ticking = false;
-    let lastFrame = -1;
     // Card 3's falling-cost line, drawn on scroll (cached on first tick).
     let cpaLine: SVGPathElement | null = null;
     let cpaFill: SVGPathElement | null = null;
@@ -298,17 +281,16 @@ export default function Build() {
         }
       }
 
-      // Brain frame: builds as card 1 rises to its pin, then plays its last few
-      // frames a short way into the card's fade — so the animation *finishes*
-      // just after the fade begins rather than freezing incomplete before it.
+      // The Brain's build: a spark as card 1 rises, the whole brain as it
+      // reaches its pin, the last touches landing a short way into the card's
+      // fade — so it finishes just after the fade begins rather than freezing
+      // incomplete before it.
       const el = cardRefs.current[0];
       if (el) {
         const vh = window.innerHeight;
-        const LAST = FRAME_COUNT - 1;
-        let idx: number;
         if (desktop) {
           const r = el.getBoundingClientRect();
-          const TAIL = 4; // last frames reserved to complete during the fade
+          const TAIL = 0.08; // share of the build that completes during the fade
           // 0 as the card sits low → 1 exactly as it reaches the pin.
           const rise = Math.min(1, Math.max(0, (vh * 0.8 - r.top) / (vh * 0.8 - PIN)));
           // How far card 2 has risen over card 1 (its fade progress).
@@ -321,30 +303,27 @@ export default function Build() {
               Math.max(0, (PIN + h - next.getBoundingClientRect().top) / h),
             );
           }
-          // Build to (LAST - TAIL) on the rise; the last TAIL frames fill in
-          // over the first quarter of the fade, so it lands full a few frames in.
-          idx = Math.round(
-            Math.min(LAST, rise * (LAST - TAIL) + Math.min(1, cover / 0.25) * TAIL),
+          brainProgress.current = Math.min(
+            1,
+            rise * (1 - TAIL) + Math.min(1, cover / 0.25) * TAIL,
           );
         } else {
           // Stacked (mobile): same trap as the CPA line — the Brain panel sits
           // at the bottom of a tall card, so card-top math finishes the build
-          // before the panel is on screen. Scrub off the visual's own rect:
-          // first frame once its top clears ~88% of the viewport, final frame
-          // when it reaches ~18% — a 0.7vh runway, so the build unfolds slowly
-          // across the middle of the screen instead of racing to done.
+          // before the panel is on screen. Drive it off the visual's own rect:
+          // the spark once its top clears ~88% of the viewport, the whole brain
+          // when it reaches ~18% — a 0.7vh runway, so the build unfolds across
+          // the middle of the screen instead of racing to done.
           const vr = (
             trainVisual ??
             (trainVisual =
               el.querySelector<HTMLElement>('[data-visual="train"]')) ??
             el
           ).getBoundingClientRect();
-          const prog = Math.min(1, Math.max(0, (vh * 0.88 - vr.top) / (vh * 0.7)));
-          idx = Math.round(prog * LAST);
-        }
-        if (idx !== lastFrame) {
-          lastFrame = idx;
-          setFrame(idx);
+          brainProgress.current = Math.min(
+            1,
+            Math.max(0, (vh * 0.88 - vr.top) / (vh * 0.7)),
+          );
         }
       }
 
@@ -394,7 +373,7 @@ export default function Build() {
   }, []);
 
   return (
-    <section id="build" className="py-28 md:py-36 bg-page border-t border-border">
+    <section id="build" className="ambient ambient-left py-20 md:py-28 bg-black">
       <div className="max-w-[1440px] mx-auto px-6">
         {/* Header */}
         <div className="max-w-2xl mb-14 md:mb-16" data-reveal>
@@ -458,7 +437,7 @@ export default function Build() {
                       (imageRight ? "lg:order-2" : "lg:order-1")
                     }
                   >
-                    {s.visual === "train" && <VisualTrain frame={frame} />}
+                    {s.visual === "train" && <VisualTrain progress={brainProgress} />}
                     {s.visual === "connect" && <VisualConnect />}
                     {s.visual === "watch" && <VisualWatch />}
                   </div>

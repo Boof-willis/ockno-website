@@ -1,5 +1,7 @@
+import { Fragment } from "react";
 import Icon from "../ui/Icon";
 import { signupUrl } from "@/lib/links";
+import MidnightScape from "../MidnightScape";
 
 const ROWS = [
   {
@@ -41,11 +43,19 @@ const ROWS = [
 
 export default function Compare() {
   return (
-    <section id="compare" className="py-28 md:py-36 bg-card border-t border-border">
-      <div className="max-w-[1440px] mx-auto px-6">
-        {/* The receipt — agency vs Ockno, line by line. */}
-        <div className="max-w-2xl mb-12" data-reveal>
-          <div className="eyebrow mb-5">The honest comparison</div>
+    <section id="compare" className="midnight-section relative bg-black pb-20 md:pb-28">
+      {/* Opening shot: the valley at midnight, dissolving into black. The
+          content below is offset by the band's own height so the heading sits
+          in its lower fade (--midnight-h, globals.css). */}
+      <MidnightScape />
+
+      <div className="midnight-offset relative max-w-[1440px] mx-auto px-6">
+        {/* The receipt — agency vs Ockno, line by line. Centred, unlike the
+            left-set headers around it: this is the page's centrepiece, the
+            footnote and CTA below are already centred, and it breaks up a run
+            of five identically-composed section openings. */}
+        <div className="max-w-2xl mx-auto text-center mb-12" data-reveal>
+          <div className="eyebrow justify-center mb-5">The honest comparison</div>
           <h2 className="text-xl md:text-5xl font-semibold tracking-tight text-balance text-foreground mb-5">
             Your agency vs. Ockno.
           </h2>
@@ -56,67 +66,75 @@ export default function Compare() {
           </p>
         </div>
 
-        {/* A real comparison table, built from flex rows (not a <table>) so the
-            pinned first column is a plain block element — position: sticky is
-            reliable there in every browser, whereas sticky <th>/<td> is buggy in
-            Safari. The two comparison columns scroll horizontally on screens too
-            narrow to fit all three; the row-label column stays pinned so labels
-            are always readable. */}
+        {/* A real comparison table, built as a CSS grid (not a <table>). From
+            md up it's three columns: row label, agency, Ockno. Below md three
+            readable columns don't fit, so each row's label becomes a
+            full-width strip above the two answers, which stay side by side.
+            Nothing scrolls sideways at any width — the old horizontal-scroll
+            version left the Ockno column off-screen on phones, so a visitor saw
+            the agency's side of the argument and never ours.
+
+            Fills step up left to right — labels on page, agency on card, Ockno
+            on nested with its header one step brighter again — so the eye
+            lands on the Ockno column by brightness. The one touch of hue is a
+            sunrise-orange rule along the top of the Ockno header, the same
+            accent as the CTAs, so the winning column is marked. Opaque tokens
+            rather than tints, so the table reads the same on any section fill. */}
         <div
           data-reveal={120}
           data-reveal-from="scale"
-          className="rounded-card border border-border overflow-hidden"
+          className="grid grid-cols-2 md:grid-cols-[28%_1fr_1fr] rounded-card border border-border overflow-hidden"
         >
-          <div className="scroll-x-thin overflow-x-auto">
-            <div className="min-w-[500px] md:min-w-[600px]">
-              {/* Header row */}
-              <div className="flex border-b border-border">
-                <div className="sticky left-0 z-20 w-[28%] shrink-0 bg-page border-r border-border px-3.5 py-2.5 md:px-5 md:py-4" />
-                <div className="w-[36%] shrink-0 bg-nested border-r border-border px-3.5 py-2.5 md:px-5 md:py-4 text-center">
-                  <span className="text-xs md:text-sm font-semibold text-muted-foreground">
-                    Your agency
-                  </span>
-                </div>
-                <div className="w-[36%] shrink-0 bg-primary/10 px-3.5 py-2.5 md:px-5 md:py-4 text-center">
-                  <span className="inline-flex items-center justify-center">
-                    {/* Wordmark — the logo already reads "Ockno", so no text label. */}
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src="/images/ockno-logo.svg" alt="Ockno" className="h-4 md:h-[18px] w-auto" />
-                  </span>
-                </div>
-              </div>
-
-              {/* Body rows */}
-              {ROWS.map((row, i) => {
-                const b = i < ROWS.length - 1 ? "border-b border-border" : "";
-                return (
-                  <div key={row.label} className={`flex ${b}`}>
-                    <div className="sticky left-0 z-20 w-[28%] shrink-0 bg-page border-r border-border px-3.5 py-2.5 md:px-5 md:py-4 flex items-center">
-                      <span className="text-[10px] md:text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                        {row.label}
-                      </span>
-                    </div>
-                    <div className="w-[36%] shrink-0 bg-nested border-r border-border px-3.5 py-2.5 md:px-5 md:py-4 flex items-start gap-2 md:gap-2.5">
-                      <Icon
-                        icon="solar:close-circle-linear"
-                        width={16}
-                        className="text-muted-foreground/70 shrink-0 mt-0.5"
-                      />
-                      <span className="text-xs md:text-sm text-muted-foreground">{row.agency}</span>
-                    </div>
-                    <div className="w-[36%] shrink-0 bg-primary/[0.06] px-3.5 py-2.5 md:px-5 md:py-4 flex items-start gap-2 md:gap-2.5">
-                      <Icon
-                        icon="solar:check-circle-bold"
-                        width={16}
-                        className="text-primary shrink-0 mt-0.5"
-                      />
-                      <span className="text-xs md:text-sm text-foreground">{row.ockno}</span>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
+          {/* Header row */}
+          <div className="hidden md:block bg-page border-r border-b border-border" />
+          <div className="bg-card border-r border-b border-border px-3.5 py-3 md:px-5 md:py-4 text-center">
+            <span className="text-xs md:text-sm font-semibold text-muted-foreground">
+              Your agency
+            </span>
           </div>
+          <div className="bg-accent shadow-[inset_0_2px_0_0_hsl(var(--primary)/0.75)] border-b border-border px-3.5 py-3 md:px-5 md:py-4 flex items-center justify-center">
+            {/* Wordmark — the logo already reads "Ockno", so no text label. */}
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/images/ockno-logo.svg" alt="Ockno" className="h-4 md:h-[18px] w-auto" />
+          </div>
+
+          {/* Body rows */}
+          {ROWS.map((row, i) => {
+            const last = i === ROWS.length - 1;
+            return (
+              <Fragment key={row.label}>
+                {/* The label strip on phones has no rule under it — the fill
+                    change is enough to group it with the answers below. */}
+                <div
+                  className={`col-span-2 md:col-span-1 bg-page md:border-r border-border px-3.5 pt-4 pb-2.5 md:px-5 md:py-4 flex items-center${last ? "" : " md:border-b"}`}
+                >
+                  <span className="text-[11px] md:text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                    {row.label}
+                  </span>
+                </div>
+                <div
+                  className={`bg-card border-r border-border px-3.5 py-3.5 md:px-5 md:py-4 flex items-start gap-2 md:gap-2.5${last ? "" : " border-b"}`}
+                >
+                  <Icon
+                    icon="solar:close-circle-linear"
+                    width={16}
+                    className="text-muted-foreground/70 shrink-0 mt-0.5"
+                  />
+                  <span className="text-[13px] md:text-sm text-muted-foreground">{row.agency}</span>
+                </div>
+                <div
+                  className={`bg-nested border-border px-3.5 py-3.5 md:px-5 md:py-4 flex items-start gap-2 md:gap-2.5${last ? "" : " border-b"}`}
+                >
+                  <Icon
+                    icon="solar:check-circle-bold"
+                    width={16}
+                    className="text-primary shrink-0 mt-0.5"
+                  />
+                  <span className="text-[13px] md:text-sm text-foreground">{row.ockno}</span>
+                </div>
+              </Fragment>
+            );
+          })}
         </div>
 
         <p className="text-center text-xs text-muted-foreground mt-6">

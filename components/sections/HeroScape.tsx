@@ -292,10 +292,17 @@ export function HeroScapeFront() {
           hand-off to the black section below. It lives INSIDE the front layer
           (z-20, in front of the trees) but is kept short and anchored to the
           bottom so it only blacks out the tree band — the product screenshot,
-          which sinks in above the tree line, stays clear of it. */}
+          which sinks in above the tree line, stays clear of it.
+          zIndex 2 is load-bearing: Ridges gives the near layer an explicit
+          z-index of 1, so without its own z this fade painted BEHIND the
+          trees, and the lit tree band ran straight into the black section
+          below as a hard horizontal edge. */}
       <div
         className="absolute inset-x-0 bottom-0 h-[34vh]"
-        style={{ background: "linear-gradient(to bottom, transparent, #000 88%)" }}
+        style={{
+          background: "linear-gradient(to bottom, transparent, #000 88%)",
+          zIndex: 2,
+        }}
       />
     </div>
   );

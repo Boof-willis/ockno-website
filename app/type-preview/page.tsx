@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 import { hankenGrotesk } from "../fonts";
 
 export const metadata: Metadata = {
@@ -72,6 +73,8 @@ function TypefacePanel({
 }
 
 export default function TypePreviewPage() {
+  // A working page, not a public one: the live build serves the 404 here.
+  if (process.env.NODE_ENV === "production") notFound();
   return (
     <main
       className={`${hankenGrotesk.variable} min-h-[100dvh] bg-[#faf7f2] px-6 py-10 text-[#211e1b] md:px-10 md:py-14 lg:px-16`}

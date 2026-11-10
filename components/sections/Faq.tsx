@@ -32,11 +32,11 @@ const FAQS = [
   },
   {
     q: "Which ad platforms does it run?",
-    a: "Google Ads and Meta. Meta is live today and Google is expanding, and it reports real conversions back to both so your ads keep improving.",
+    a: "Google Ads and Meta, both live today. Ockno builds and manages campaigns on each, and reports real conversions back to both so your ads keep improving.",
   },
   {
     q: "How fast will I see results?",
-    a: "Setup is quick, but it takes a few weeks of real jobs for the system to learn what a good customer looks like for you. Anyone promising instant, guaranteed numbers isn't being honest — results depend on your market, offer, and volume.",
+    a: "Setup is quick, but it takes a few weeks of real sales for the system to learn what a good customer looks like for you. Anyone promising instant, guaranteed numbers isn't being honest — results depend on your market, offer, and volume.",
   },
 ];
 
@@ -55,7 +55,7 @@ const FAQ_SCHEMA = {
    reader's choice; the divide-y list keeps the section quiet either way. */
 export default function Faq() {
   return (
-    <section id="faq" className="relative z-10 py-28 md:py-32">
+    <section id="faq" className="relative z-10 py-24 md:py-28">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(FAQ_SCHEMA) }}

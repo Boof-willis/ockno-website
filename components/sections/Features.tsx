@@ -4,39 +4,75 @@
    soft ambient backdrop; the tab bar (and the arrows) switch which surface it
    shows. Social proof is carried in the header stat and the "Results" tab.
 
+   Tab order is by what a prospect most needs to see, not by funnel step: most
+   visitors never click a tab, so the first one is the proof (revenue against
+   ad spend), then what Ockno does to get it (ads, creative), then the CRM
+   behind it (pipeline, follow-up).
+
    Tabs are useState-driven (clicks, not scroll) so they work regardless of the
    scroll engine. Own mocks + own gradient backdrop — no external assets. */
 
 import { useState } from "react";
 import Icon from "../ui/Icon";
 
-type TabKey = "ads" | "pipeline" | "followup" | "results";
+type TabKey = "ads" | "studio" | "pipeline" | "followup" | "results";
 
 const TABS: {
   key: TabKey;
   label: string;
   icon: string;
   title: string;
+  /* The one-line point of the tab, readable without studying the screenshot. */
+  headline: string;
   caption: string;
+  /* True when the screenshot carries the app's left sidebar: the frame then
+     shows x 264–1920 of the 1920px capture (CSS-only, same crop as the hero)
+     so the working area fills the window instead of 14% going to nav labels. */
+  cropSidebar?: boolean;
   /* When set, the tab shows a real product screenshot full-bleed in the app
      window (the screenshot carries its own app chrome). */
   image?: string;
 }[] = [
   {
+    key: "results",
+    label: "Results",
+    icon: "solar:chart-2-linear",
+    title: "Results",
+    headline: "See which ads made you money.",
+    cropSidebar: true,
+    image: "/images/insights.webp",
+    caption:
+      "Real revenue reported back to the ad platforms — so every week the ads find more buyers, not clicks.",
+  },
+  {
     key: "ads",
     label: "Ads",
     icon: "solar:volume-loud-linear",
     title: "Ad campaigns",
-    image: "/images/ads-manager.png",
+    headline: "Campaigns built and managed for you.",
+    cropSidebar: true,
+    image: "/images/ads-manager.webp",
     caption:
       "Launch and manage Google & Meta campaigns from one place — budgets, creatives, and bids handled for you.",
+  },
+  {
+    key: "studio",
+    label: "Studio",
+    icon: "solar:magic-stick-3-linear",
+    title: "AI Studio",
+    headline: "Ad creative from a sentence.",
+    image: "/images/studio.webp",
+    caption:
+      "Describe an ad and Ockno makes it — images, video, and voice-over, cut into finished creatives and saved to your library.",
   },
   {
     key: "pipeline",
     label: "Pipelines",
     icon: "solar:diagram-up-linear",
     title: "Pipeline",
-    image: "/images/pipelines.png",
+    headline: "Every lead, from click to paid.",
+    cropSidebar: true,
+    image: "/images/pipelines.webp",
     caption:
       "A drag-and-drop CRM that mirrors how you close — every lead tracked from the first click to a paid invoice.",
   },
@@ -45,18 +81,11 @@ const TABS: {
     label: "Follow-up",
     icon: "solar:routing-2-linear",
     title: "Automations",
-    image: "/images/automations.png",
+    headline: "Follow-up that never forgets.",
+    cropSidebar: true,
+    image: "/images/automations.webp",
     caption:
       "Email & SMS sequences that fire on real outcomes, not form fills — so no lead ever goes cold.",
-  },
-  {
-    key: "results",
-    label: "Results",
-    icon: "solar:chart-2-linear",
-    title: "Results",
-    image: "/images/insights.png",
-    caption:
-      "Real revenue reported back to the ad platforms — so every week the ads find more buyers, not clicks.",
   },
 ];
 
@@ -77,7 +106,7 @@ function AppFrame({
   const tab = TABS[active];
   const View = VIEWS[tab.key];
   return (
-    <div className="relative rounded-[26px] overflow-hidden border border-border p-4 sm:p-8 lg:p-12">
+    <div className="relative rounded-[26px] overflow-hidden border border-border p-3 sm:p-5 lg:p-8">
       {/* Ambient backdrop (own gradient mesh, not a photo) */}
       <div
         className="absolute inset-0 pointer-events-none"
@@ -99,16 +128,24 @@ function AppFrame({
       {tab.image ? (
         /* Real product screenshot — carries its own app chrome, so it fills
            the whole window full-bleed. */
-        <div className="relative rounded-2xl border border-border shadow-elevated overflow-hidden bg-card">
-          {/* Explicit intrinsic dimensions (all product shots are 1920×1080) —
-              WebKit otherwise lays the img out at height 0 until a scroll. */}
+        <div
+          className="relative rounded-2xl border border-border shadow-elevated overflow-hidden bg-card"
+          style={{ aspectRatio: tab.cropSidebar ? "1656 / 1080" : "1920 / 1080" }}
+        >
+          {/* Explicit intrinsic dimensions (all product shots are 1920×1080).
+              The box above owns the layout height; the attributes still spare
+              WebKit a zero-height first layout. Only the active tab's image is
+              in the DOM, so the others cost nothing until they are opened. */}
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={tab.image}
             alt={`Ockno — ${tab.title}`}
             width={1920}
             height={1080}
-            className="w-full h-auto block"
+            loading="lazy"
+            decoding="async"
+            className="absolute top-0 max-w-none h-auto block"
+            style={tab.cropSidebar ? { left: "-15.942%", width: "115.942%" } : { left: 0, width: "100%" }}
           />
         </div>
       ) : (
@@ -179,7 +216,7 @@ export default function Features() {
     setActive((a) => (a + dir + TABS.length) % TABS.length);
 
   return (
-    <section id="features" className="py-24 md:py-32 bg-page border-t border-border">
+    <section id="features" className="ambient ambient-right py-20 md:py-28 bg-black">
       <div className="max-w-[1440px] mx-auto px-6">
         {/* Header */}
         <div className="grid lg:grid-cols-[1.3fr_1fr] gap-6 lg:gap-16 items-end mb-10 md:mb-12">
@@ -237,9 +274,14 @@ export default function Features() {
           >
             <Icon icon="solar:arrow-left-linear" width={20} />
           </button>
-          <p className="flex-1 text-center text-sm text-muted-foreground text-balance">
-            {TABS[active].caption}
-          </p>
+          <div className="flex-1 text-center">
+            <p className="text-base md:text-xl font-semibold tracking-tight text-foreground mb-1.5">
+              {TABS[active].headline}
+            </p>
+            <p className="text-sm text-muted-foreground text-balance max-w-2xl mx-auto">
+              {TABS[active].caption}
+            </p>
+          </div>
           <button
             type="button"
             aria-label="Next feature"

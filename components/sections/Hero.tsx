@@ -16,10 +16,11 @@ const ROTATING = [
 ];
 
 /* Eyebrow marquee. Every line is a claim already made elsewhere on this site —
-   the metadata positioning, the CTA subtext, and the free trial terms. It
-   points at #compare because that's where a sceptic's actual objection ("how is
-   this different from an agency?") gets answered. Nothing here is aspirational;
-   if a line stops being true, remove it. */
+   the FAQ's tool-versus-team answer, the comparison's no-retainer and
+   cancel-anytime rows, and the free trial terms. It points at #compare
+   because that's where a sceptic's actual objection ("how is this different
+   from an agency?") gets answered. Nothing here is aspirational; if a line
+   stops being true, remove it. */
 const EYEBROW_LINES = [
   "Not a tool you operate — a hire that delivers",
   "No retainers. Cancel anytime.",
@@ -59,7 +60,7 @@ export default function Hero() {
               descender padding tightens the gap further. Desktop keeps 1.06 —
               at 55px that spacing reads as intended. */}
           <h1 className="text-[clamp(21px,6.4vw,55px)] md:text-[55px] font-semibold tracking-[-0.03em] text-foreground mb-6 leading-[1.28] md:leading-[1.06]">
-            The marketing operator that<br />
+            The AI marketing brain that<br />
             <RotatingWord
               words={ROTATING}
               className="bg-gradient-to-r from-primary-hover to-primary bg-clip-text text-transparent"
@@ -69,10 +70,13 @@ export default function Hero() {
 
         <Reveal delay={T.subhead}>
           {/* mb-8 (not mb-3.5) carries the spacing the removed audience line
-              used to provide below this block. */}
+              used to provide below this block. With the headline's first
+              phrase ("learns your business"), this completes the positioning
+              statement: learns your business, tracks every lead from click to
+              paid invoice, and fixes what's costing you customers. */}
           <p className="text-base md:text-lg text-balance max-w-[520px] mx-auto mb-8 text-muted-foreground">
-            It learns your business and runs your marketing for you — so you
-            don&apos;t have to.
+            It tracks every lead from click to paid invoice, then finds and
+            fixes what&apos;s costing you customers.
           </p>
         </Reveal>
 
@@ -117,18 +121,34 @@ export default function Hero() {
           <RevealCard delay={T.card}>
             {/* Real product — the Brain: Ockno learning a business from every
                 chat. The screenshot carries its own app chrome, so it stands on
-                its own, masked to a rounded frame — no fake browser bar. */}
-            {/* Explicit intrinsic dimensions (all product shots are 1920×1080).
-                Without them WebKit lays the img out at height 0 before decode
-                and never relayouts until a scroll — same trap as the scape. */}
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="/images/brain.png"
-              alt="Ockno — the Brain, learning a business from every chat"
-              width={1920}
-              height={1080}
-              className="w-full h-auto block rounded-xl overflow-hidden border border-border shadow-2xl bg-page"
-            />
+                its own, masked to a rounded frame — no fake browser bar.
+
+                Cropped to the main pane: the frame shows x 264–1920 of the
+                1920px capture, dropping the app sidebar.
+                At hero size the sidebar's labels were ~7px gray lines, and
+                spending 16% of the width on them shrank the graph — the thing
+                the shot is actually selling — until it read as texture. The
+                crop is CSS-only (aspect-ratio box + offset img), so the source
+                file stays the full capture. */}
+            <div
+              className="relative w-full overflow-hidden rounded-xl border border-border shadow-2xl bg-page"
+              style={{ aspectRatio: "1656 / 1080" }}
+            >
+              {/* Explicit intrinsic dimensions (all product shots are
+                  1920×1080). The box above owns the layout height now, but the
+                  attributes still spare WebKit a zero-height first layout. */}
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/images/brain.webp"
+                fetchPriority="high"
+                decoding="async"
+                alt="Ockno — the Brain, learning a business from every chat"
+                width={1920}
+                height={1080}
+                className="absolute top-0 max-w-none h-auto block"
+                style={{ left: "-15.942%", width: "115.942%" }}
+              />
+            </div>
           </RevealCard>
         </div>
       </div>
